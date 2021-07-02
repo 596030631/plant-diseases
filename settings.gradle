@@ -1,2 +1,2 @@
-rootProject.name = "plant-yes"
+rootProject.name = "plant"
 include ':app'
