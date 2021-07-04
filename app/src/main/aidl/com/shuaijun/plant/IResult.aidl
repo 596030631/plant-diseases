@@ -8,5 +8,5 @@ interface IResult {
      * Demonstrates some basic types that you can use as parameters
      * and return values in AIDL.
      */
-    void analysis(String result);
+    void analysis(long id, String result);
 }

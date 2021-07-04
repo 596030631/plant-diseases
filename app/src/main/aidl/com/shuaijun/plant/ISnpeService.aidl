@@ -11,5 +11,5 @@ interface ISnpeService {
      */
     void observer(IResult listener);
 
-    void putTask(String pathName);
+    void putTask(long id, String pathName);
 }

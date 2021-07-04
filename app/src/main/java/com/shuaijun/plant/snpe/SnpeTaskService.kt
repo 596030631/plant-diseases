@@ -35,14 +35,14 @@ class SnpeTaskService : Service() {
             listener = li
         }
 
-        override fun putTask(pathName: String?) {
+        override fun putTask(id: Long, pathName: String?) {
             if (ImageDetectionFloat.getInstance().available()) {
                 handler.post {
                     val bitmap = BitmapFactory.decodeFile(pathName)
                     bitmap?.let { bp ->
                         ImageDetectionFloat.getInstance().detection(bp) {
                             Logger.w(it.toString())
-                            listener?.analysis(it.toString())
+                            listener?.analysis(id, it.toString())
                         }
                     }
                 }

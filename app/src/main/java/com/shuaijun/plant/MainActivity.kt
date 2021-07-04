@@ -5,10 +5,13 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -17,7 +20,7 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.shuaijun.plant.databinding.ActivityMainBinding
 import com.shuaijun.plant.snpe.SnpeTaskService
-import com.shuaijun.plant.ui.HomeFragment
+import com.shuaijun.plant.ui.InletsFragment
 
 
 class MainActivity : FragmentActivity() {
@@ -29,13 +32,13 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setFullscreen(true, false)
         Logger.addLogAdapter(AndroidLogAdapter())
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         mainModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
+        mainModel.initSharedPreference(this)
         if (Build.VERSION.SDK_INT >= 23) {
             Log.d(tag, "begin askForPermission the sdk version is" + Build.VERSION.SDK_INT)
             askForPermission()
@@ -45,6 +48,28 @@ class MainActivity : FragmentActivity() {
         }
 
         mainModel.fragmentManager = supportFragmentManager
+    }
+
+    private fun setFullscreen(isShowStatusBar: Boolean, isShowNavigationBar: Boolean) {
+        var uiOptions: Int = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        if (!isShowStatusBar) {
+            uiOptions = uiOptions or View.SYSTEM_UI_FLAG_FULLSCREEN
+        }
+        if (!isShowNavigationBar) {
+            uiOptions = uiOptions or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        }
+        window.decorView.systemUiVisibility = uiOptions
+        setNavigationStatusColor(Color.TRANSPARENT)
+    }
+
+    private fun setNavigationStatusColor(color: Int) {
+        //VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.navigationBarColor = color
+        window.statusBarColor = color
     }
 
     private fun askForPermission() {
@@ -123,17 +148,17 @@ class MainActivity : FragmentActivity() {
 
     private fun updateUI() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, HomeFragment.newInstance()).commit()
+            .replace(R.id.fragment_container, InletsFragment.newInstance()).commit()
 
         serviceConnect = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 Logger.d("连接到服务端")
                 snpeService = ISnpeService.Stub.asInterface(service)
                 mainModel.analysisImage.observe(this@MainActivity, {
-                    snpeService?.putTask(it)
+                    snpeService?.putTask(it.id, it.path)
                 })
                 snpeService?.observer(object : IResult.Stub() {
-                    override fun analysis(result: String?) {
+                    override fun analysis(id: Long, result: String) {
                         mainModel.analysisImageResult.postValue(result)
                     }
                 })
