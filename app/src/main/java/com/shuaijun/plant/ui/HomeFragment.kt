@@ -34,12 +34,12 @@ class HomeFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         binding.floatingActionButton.setOnClickListener {
-            mainModel.fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CameraFragment.newInstance()).commit()
+//            mainModel.fragmentManager.beginTransaction()
+//                .replace(R.id.fragment_container, CameraFragment.newInstance()).commit()
         }
 
         contents = Content.loadFromFile()
-        Logger.d("加载文件数据")
+//        Logger.d("加载文件数据")
     }
 
     override fun onStart() {
