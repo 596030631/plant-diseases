@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="100dp"
@@ -9,8 +9,7 @@
     app:cardCornerRadius="3dp"
     tools:viewBindingIgnore="false">
 
-
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,6 +18,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY" />
-    </androidx.cardview.widget.CardView>
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/icon_result"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="7dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/icon_success" />
+    </FrameLayout>
+
+</androidx.cardview.widget.CardView>

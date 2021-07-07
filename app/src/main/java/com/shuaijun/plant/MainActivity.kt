@@ -159,7 +159,7 @@ class MainActivity : FragmentActivity() {
                 })
                 snpeService?.observer(object : IResult.Stub() {
                     override fun analysis(id: Long, result: String) {
-                        mainModel.analysisImageResult.postValue(result)
+                        mainModel.analysisImageResult.postValue(AIResult(id, result))
                     }
                 })
             }

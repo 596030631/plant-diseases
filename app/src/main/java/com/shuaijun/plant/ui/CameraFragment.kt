@@ -120,7 +120,6 @@ class CameraFragment : BaseFragment() {
                         captureEnabled = true;
                     }
                 })
-
         }
 
         binding.btnGallery.setOnClickListener {
@@ -132,6 +131,23 @@ class CameraFragment : BaseFragment() {
             imgDataList,
             { view, position ->
                 view.root.image.setImageDrawable(Drawable.createFromPath(imgDataList[position].path))
+                if (imgDataList[position].info.isNotEmpty()) {
+                    view.iconResult.visibility = View.VISIBLE
+                } else {
+                    view.iconResult.visibility = View.GONE
+                }
+                binding.aiResult.visibility = View.GONE
+                view.root.setOnClickListener {
+                    if (binding.layoutImgBig.visibility != View.VISIBLE) binding.layoutImgBig.visibility =
+                        View.VISIBLE
+                    binding.imgBig.setImageDrawable(Drawable.createFromPath(imgDataList[position].path))
+                    binding.imgBigClose.setOnClickListener {
+                        binding.layoutImgBig.visibility = View.GONE
+                    }
+                    binding.aiResult.text = imgDataList[position].info
+                    binding.aiResult.visibility = View.VISIBLE
+
+                }
             },
             { parent ->
                 ViewHolder(
@@ -148,7 +164,13 @@ class CameraFragment : BaseFragment() {
         }
 
         mainModel.analysisImageResult.observe(this, {
-            Logger.w(it)
+            imgDataList.forEach { data ->
+                if (it.id == data.id) {
+                    data.info = it.result
+                    adapter.notifyDataSetChanged()
+                    return@forEach
+                }
+            }
         })
     }
 
@@ -181,11 +203,11 @@ class CameraFragment : BaseFragment() {
                 }
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-//            val imageAnalysis = ImageAnalysis.Builder()
-//                .setTargetResolution(Size(1280, 720))
-//                .setTargetRotation(ROTATION_0)
-//                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-//                .build()
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetResolution(Size(1280, 720))
+                .setTargetRotation(ROTATION_0)
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
             imageCapture = ImageCapture.Builder().build()
 
 //            imageAnalysis.setAnalyzer(cameraExecutor, { image ->
@@ -225,7 +247,7 @@ class CameraFragment : BaseFragment() {
                 cameraProvider.unbindAll()
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    requireActivity(), cameraSelector, preview, imageCapture
+                    requireActivity(), cameraSelector, imageAnalysis, preview, imageCapture
                 )
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -259,9 +281,6 @@ class CameraFragment : BaseFragment() {
                 intent.data?.let { uri ->
                     val path = getFilePathFromContentUri(uri, requireContext().contentResolver)
                     Logger.d(path)
-//                    val file = File(path)
-//                    val bitmap = BitmapFactory.decodeFile(path)
-//                    binding.imgGallery.setImageDrawable(Drawable.createFromPath(path))
                     imgDataList.add(ImageData(System.currentTimeMillis(), path ?: return, "").also {
                         mainModel.analysisImage.postValue(it)
                     })

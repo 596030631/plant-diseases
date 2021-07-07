@@ -7,11 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.shuaijun.plant.ui.ImageData
 
+data class AIResult(val id: Long, val result: String)
+
 class MainViewModel() : ViewModel() {
 
     var analysisImage = MutableLiveData<ImageData>() // 图片识别
 
-    var analysisImageResult = MutableLiveData<String>() // 图片识别
+    var analysisImageResult = MutableLiveData<AIResult>() // 图片识别
 
     lateinit var fragmentManager: FragmentManager
 
