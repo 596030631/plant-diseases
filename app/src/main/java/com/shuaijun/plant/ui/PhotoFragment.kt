@@ -17,27 +17,87 @@
 package com.shuaijun.plant.ui
 
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
+import com.kaopiz.kprogresshud.KProgressHUD
+import com.orhanobut.logger.Logger
+import com.shuaijun.plant.ImageInputData
 import com.shuaijun.plant.R
 import java.io.File
 
 
 /** Fragment used for each individual page showing a photo inside of [GalleryFragment] */
-class PhotoFragment internal constructor() : Fragment() {
+class PhotoFragment internal constructor() : BaseFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?) = ImageView(context)
+    private lateinit var loading: KProgressHUD
+    private lateinit var view: ImageView
+    private var resultString: String? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) = ImageView(context).also { view = it }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        Logger.d("onActivityCreate")
+        loading = KProgressHUD.create(requireContext())
+            .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+            .setLabel("")
+            .setDetailsLabel("分析中")
+            .setCancellable(true)
+            .setAnimationSpeed(2)
+            .setDimAmount(0.5f)
+        mainModel.analysisImageResult.observe(viewLifecycleOwner, { result ->
+            loading.dismiss()
+            resultString = result.result
+
+            if (hashCode().toLong() == result.id) {
+                val html = "<h1>识别结果</h1></br><h2>$result</h2>"
+                AlertDialog.Builder(requireContext())
+                    .setNegativeButton(
+                        R.string.confirm
+                    ) { p0, _ ->
+                        Logger.d("onCLick")
+                        p0?.dismiss()
+                        Toast.makeText(requireContext(), "报告已保存到手机", Toast.LENGTH_LONG).show()
+                    }
+                    .setIcon(R.drawable.ic_report_blue)
+                    .setTitle("SnpeHelper")
+                    .setMessage(Html.fromHtml(html))
+                    .setCancelable(true)
+                    .create().show()
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
         val args = arguments ?: return
-        val resource = args.getString(FILE_NAME_KEY)?.let { File(it) } ?: R.drawable.ic_photo
-        Glide.with(view).load(resource).into(view as ImageView)
+        val resource = args.getString(FILE_NAME_KEY)?.let {
+            File(it).also { file ->
+                if (resultString == null) {
+                    loading.show()
+                    ImageInputData(hashCode().toLong(), file.absolutePath, "").also { id ->
+                        mainModel.analysisImage.postValue(id)
+                    }
+                }
+            }
+        } ?: R.drawable.ic_photo
+        Glide.with(view).load(resource).into(view)
+        Logger.d("onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Logger.d("onPause")
+
+        if (loading.isShowing) loading.dismiss()
     }
 
     companion object {

@@ -6,20 +6,18 @@ import android.graphics.Color
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-//import com.shuaijun.plant.ui.ImageData
+
+data class ImageInputData(val id: Long, var path: String, var info: String)
 
 data class AIResult(val id: Long, val result: String)
 
 class MainViewModel() : ViewModel() {
 
-//    var analysisImage = MutableLiveData<ImageData>() // 图片识别
+    var analysisImage = MutableLiveData<ImageInputData>() // 图片识别
 
     var analysisImageResult = MutableLiveData<AIResult>() // 图片识别
-
-    lateinit var fragmentManager: FragmentManager
 
 
     private lateinit var sharedPreference: SharedPreferences

@@ -39,42 +39,40 @@ class MainActivity : FragmentActivity() {
 
         mainModel.setFullscreen(window, true, false)
 
-
         mainModel.initSharedPreference(this)
 
-        mainModel.fragmentManager = supportFragmentManager
+        bindService()
 
-//        bindService()
     }
 
-//    private fun bindService() {
-//        serviceConnect = object : ServiceConnection {
-//            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-////                Logger.d("连接到服务端")
-//                snpeService = ISnpeService.Stub.asInterface(service)
-//                mainModel.analysisImage.observe(this@MainActivity, {
-//                    snpeService?.putTask(it.id, it.path)
-//                })
-//                snpeService?.observer(object : IResult.Stub() {
-//                    override fun analysis(id: Long, result: String) {
-//                        mainModel.analysisImageResult.postValue(AIResult(id, result))
-//                    }
-//                })
-//            }
-//
-//            override fun onServiceDisconnected(name: ComponentName?) {
-//                Logger.d("服务端断开")
-//            }
-//        }
-//        val intent = Intent(this, SnpeTaskService::class.java)
-//        Intent().apply {
-//            `package` = "com.shuaijun.plant"
-//            type = "snpe"
-//            component =
-//                ComponentName("com.shuaijun.plant", "com.shuaijun.plant.snpe.SnpeTaskService")
-//        }
-//        bindService(intent, serviceConnect ?: return, BIND_AUTO_CREATE)
-//    }
+    private fun bindService() {
+        serviceConnect = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                Logger.d("连接到服务端")
+                snpeService = ISnpeService.Stub.asInterface(service)
+                mainModel.analysisImage.observe(this@MainActivity, {
+                    snpeService?.putTask(it.id, it.path)
+                })
+                snpeService?.observer(object : IResult.Stub() {
+                    override fun analysis(id: Long, result: String) {
+                        mainModel.analysisImageResult.postValue(AIResult(id, result))
+                    }
+                })
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                Logger.d("服务端断开")
+            }
+        }
+        val intent = Intent(this, SnpeTaskService::class.java)
+        Intent().apply {
+            `package` = "com.shuaijun.plant"
+            type = "snpe"
+            component =
+                ComponentName("com.shuaijun.plant", "com.shuaijun.plant.snpe.SnpeTaskService")
+        }
+        bindService(intent, serviceConnect ?: return, BIND_AUTO_CREATE)
+    }
 
     override fun onResume() {
         super.onResume()

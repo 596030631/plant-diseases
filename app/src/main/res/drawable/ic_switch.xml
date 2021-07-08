@@ -17,8 +17,8 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:tint="@color/selector_ic"
-    android:width="128dp"
-    android:height="128dp"
+    android:width="92dp"
+    android:height="92dp"
     android:viewportWidth="46.0"
     android:viewportHeight="46.0"
     tools:ignore="VectorRaster">

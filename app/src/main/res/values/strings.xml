@@ -24,4 +24,7 @@
     <string name="delete_button_alt">Delete</string>
     <string name="delete_dialog">Delete current photo?</string>
     <string name="delete_title">Confirm</string>
+
+    <string name="confirm">生成检测报告</string>
+
 </resources>

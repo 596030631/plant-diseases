@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.shuaijun.plant.ui
 
 import android.annotation.SuppressLint
@@ -11,15 +26,26 @@ import android.graphics.drawable.ColorDrawable
 import android.hardware.display.DisplayManager
 import android.media.MediaScannerConnection
 import android.net.Uri
-import androidx.window.WindowManager
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.ImageButton
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraInfoUnavailableException
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.Metadata
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -29,6 +55,7 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.shuaijun.plant.KEY_EVENT_ACTION
@@ -43,7 +70,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayDeque
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
@@ -62,7 +90,7 @@ typealias LumaListener = (luma: Double) -> Unit
  */
 class BlankFragment : Fragment() {
 
-    private lateinit var containerLayout: ConstraintLayout
+    private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: PreviewView
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
@@ -74,7 +102,6 @@ class BlankFragment : Fragment() {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
-    private lateinit var windowManager: WindowManager
 
     private val displayManager by lazy {
         requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -89,7 +116,7 @@ class BlankFragment : Fragment() {
             when (intent.getIntExtra(KEY_EVENT_EXTRA, KeyEvent.KEYCODE_UNKNOWN)) {
                 // When the volume down button is pressed, simulate a shutter button click
                 KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                    val shutter = containerLayout
+                    val shutter = container
                         .findViewById<ImageButton>(R.id.camera_capture_button)
                     shutter.simulateClick()
                 }
@@ -114,6 +141,17 @@ class BlankFragment : Fragment() {
         } ?: Unit
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Make sure that all permissions are still present, since the
+        // user could have removed them while the app was in paused state.
+        if (!PermissionsFragment.hasPermissions(requireContext())) {
+            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
+                BlankFragmentDirections.actionCameraToPermissions()
+            )
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
 
@@ -128,13 +166,15 @@ class BlankFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? =
+        savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_blank, container, false)
 
     private fun setGalleryThumbnail(uri: Uri) {
         // Reference of the view that holds the gallery thumbnail
-        val thumbnail = containerLayout.findViewById<ImageButton>(R.id.photo_view_button)
+        val thumbnail = container.findViewById<ImageButton>(R.id.photo_view_button)
+        container.findViewById<ImageButton>(R.id.back_button).setOnClickListener {
+            Navigation.findNavController(it).navigate(BlankFragmentDirections.actionCameraFragmentToHomeFragment())
+        }
 
         // Run the operations in the view's thread
         thumbnail.post {
@@ -153,8 +193,8 @@ class BlankFragment : Fragment() {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        containerLayout = view as ConstraintLayout
-        viewFinder = containerLayout.findViewById(R.id.view_finder)
+        container = view as ConstraintLayout
+        viewFinder = container.findViewById(R.id.view_finder)
 
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -167,9 +207,6 @@ class BlankFragment : Fragment() {
 
         // Every time the orientation of device changes, update rotation for use cases
         displayManager.registerDisplayListener(displayListener, null)
-
-        //Initialize WindowManager to retrieve display metrics
-        windowManager = WindowManager(view.context)
 
         // Determine the output directory
         outputDirectory = MainActivity.getOutputDirectory(requireContext())
@@ -199,8 +236,8 @@ class BlankFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        // Rebind the camera with the updated display metrics
-        bindCameraUseCases()
+        // Redraw the camera UI controls
+        updateCameraUi()
 
         // Enable or disable switching between cameras
         updateCameraSwitchButton()
@@ -233,10 +270,10 @@ class BlankFragment : Fragment() {
     private fun bindCameraUseCases() {
 
         // Get screen metrics used to setup camera for full screen resolution
-        val metrics = windowManager.getCurrentWindowMetrics().bounds
-        Log.d(TAG, "Screen metrics: ${metrics.width()} x ${metrics.height()}")
+        val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+        Log.d(TAG, "Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
 
-        val screenAspectRatio = aspectRatio(metrics.width(), metrics.height())
+        val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
         Log.d(TAG, "Preview aspect ratio: $screenAspectRatio")
 
         val rotation = viewFinder.display.rotation
@@ -292,11 +329,10 @@ class BlankFragment : Fragment() {
             // A variable number of use-cases can be passed here -
             // camera provides access to CameraControl & CameraInfo
             camera = cameraProvider.bindToLifecycle(
-                this, cameraSelector, preview, imageCapture, imageAnalyzer
-            )
+                this, cameraSelector, preview, imageCapture, imageAnalyzer)
 
             // Attach the viewfinder's surface provider to preview use case
-            preview?.setSurfaceProvider(viewFinder.surfaceProvider)
+            preview?.setSurfaceProvider(viewFinder.createSurfaceProvider())
         } catch (exc: Exception) {
             Log.e(TAG, "Use case binding failed", exc)
         }
@@ -325,18 +361,18 @@ class BlankFragment : Fragment() {
     private fun updateCameraUi() {
 
         // Remove previous UI if any
-        containerLayout.findViewById<ConstraintLayout>(R.id.camera_ui_container)?.let {
-            containerLayout.removeView(it)
+        container.findViewById<ConstraintLayout>(R.id.camera_ui_container)?.let {
+            container.removeView(it)
         }
 
         // Inflate a new view containing all UI for controlling the camera
-        val controls = View.inflate(requireContext(), R.layout.camera_ui_container, containerLayout)
+        val controls = View.inflate(requireContext(), R.layout.camera_ui_container, container)
 
         // In the background, load latest photo taken (if any) for gallery thumbnail
         lifecycleScope.launch(Dispatchers.IO) {
             outputDirectory.listFiles { file ->
                 EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
-            }?.maxOrNull()?.let {
+            }.maxOrNull()?.let {
                 setGalleryThumbnail(Uri.fromFile(it))
             }
         }
@@ -406,11 +442,10 @@ class BlankFragment : Fragment() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                     // Display flash animation to indicate that photo was captured
-                    containerLayout.postDelayed({
-                        containerLayout.foreground = ColorDrawable(Color.WHITE)
-                        containerLayout.postDelayed(
-                            { containerLayout.foreground = null }, ANIMATION_FAST_MILLIS
-                        )
+                    container.postDelayed({
+                        container.foreground = ColorDrawable(Color.WHITE)
+                        container.postDelayed(
+                            { container.foreground = null }, ANIMATION_FAST_MILLIS)
                     }, ANIMATION_SLOW_MILLIS)
                 }
             }
@@ -437,20 +472,18 @@ class BlankFragment : Fragment() {
         // Listener for button used to view the most recent photo
         controls.findViewById<ImageButton>(R.id.photo_view_button).setOnClickListener {
             // Only navigate when the gallery has photos
-//            if (true == outputDirectory.listFiles()?.isNotEmpty()) {
-//                Navigation.findNavController(
-//                    requireActivity(), R.id.fragment_container
-//                ).navigate(
-//                    CameraFragmentDirections
-//                        .actionCameraToGallery(outputDirectory.absolutePath)
-//                )
-//            }
+            if (true == outputDirectory.listFiles()?.isNotEmpty()) {
+                Navigation.findNavController(
+                    requireActivity(), R.id.fragment_container
+                ).navigate(BlankFragmentDirections
+                    .actionCameraToGallery(outputDirectory.absolutePath))
+            }
         }
     }
 
     /** Enabled or disabled a button to switch cameras depending on the available cameras */
     private fun updateCameraSwitchButton() {
-        val switchCamerasButton = containerLayout.findViewById<ImageButton>(R.id.camera_switch_button)
+        val switchCamerasButton = container.findViewById<ImageButton>(R.id.camera_switch_button)
         try {
             switchCamerasButton.isEnabled = hasBackCamera() && hasFrontCamera()
         } catch (exception: CameraInfoUnavailableException) {
@@ -565,9 +598,7 @@ class BlankFragment : Fragment() {
 
         /** Helper function used to create a timestamped file */
         private fun createFile(baseFolder: File, format: String, extension: String) =
-            File(
-                baseFolder, SimpleDateFormat(format, Locale.US)
-                    .format(System.currentTimeMillis()) + extension
-            )
+            File(baseFolder, SimpleDateFormat(format, Locale.US)
+                .format(System.currentTimeMillis()) + extension)
     }
 }

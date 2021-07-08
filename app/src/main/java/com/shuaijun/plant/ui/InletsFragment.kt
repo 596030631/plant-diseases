@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.Navigation
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.shuaijun.plant.R
 import com.shuaijun.plant.databinding.FragmentInletsBinding
@@ -75,8 +76,9 @@ class InletsFragment : BaseFragment() {
                     TextUtils.equals(user, userSaved) && TextUtils.equals(passwd, passwdSaved)
                 if (success) {
                     showSuccess()
-                    mainModel.fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, HomeFragment.newInstance()).commit()
+                    Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(InletsFragmentDirections.actionInletsFragmentToPermissionsFragment())
+//                    mainModel.fragmentManager.beginTransaction()
+//                        .replace(R.id.fragment_container, HomeFragment.newInstance()).commit()
                 } else showFailed()
                 hideLoading()
             }
