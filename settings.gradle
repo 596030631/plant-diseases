@@ -1,3 +1,4 @@
 rootProject.name = "plant"
 include ':app'
 include ':banner'
+include ':rubbish'
