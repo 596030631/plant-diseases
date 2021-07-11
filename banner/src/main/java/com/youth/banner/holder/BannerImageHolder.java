@@ -5,13 +5,14 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewbinding.ViewBinding;
 
 public
-class BannerImageHolder extends RecyclerView.ViewHolder {
-    public ImageView imageView;
+class BannerImageHolder<T extends ViewBinding> extends RecyclerView.ViewHolder {
+    public T binding;
 
-    public BannerImageHolder(@NonNull View view) {
-        super(view);
-        this.imageView = (ImageView) view;
+    public BannerImageHolder(@NonNull T view) {
+        super(view.getRoot());
+        this.binding = view;
     }
 }

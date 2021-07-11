@@ -104,7 +104,7 @@ class GalleryFragment internal constructor() : Fragment() {
 
         // Handle back button press
         binding.backButton.setOnClickListener {
-            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigateUp()
+            Navigation.findNavController(requireActivity(), R.id.fragment_container).popBackStack()
         }
 
         binding.reportButton.setOnClickListener {

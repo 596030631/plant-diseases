@@ -23,10 +23,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
     implementation "androidx.viewpager2:viewpager2:1.1.0-alpha01"
+    implementation 'com.google.android.material:material:1.2.1'
+
 }
 
 task androidSourcesJar(type: Jar) {

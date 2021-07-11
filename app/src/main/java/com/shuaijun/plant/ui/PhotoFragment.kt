@@ -48,8 +48,8 @@ class PhotoFragment internal constructor() : BaseFragment() {
         Logger.d("onActivityCreate")
         loading = KProgressHUD.create(requireContext())
             .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-            .setLabel("")
-            .setDetailsLabel("分析中")
+            .setLabel("请稍等")
+            .setDetailsLabel("正在分析")
             .setCancellable(true)
             .setAnimationSpeed(2)
             .setDimAmount(0.5f)
@@ -65,10 +65,10 @@ class PhotoFragment internal constructor() : BaseFragment() {
                     ) { p0, _ ->
                         Logger.d("onCLick")
                         p0?.dismiss()
-                        Toast.makeText(requireContext(), "报告已保存到手机", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "PDF检测结果已生成", Toast.LENGTH_LONG).show()
                     }
                     .setIcon(R.drawable.ic_report_blue)
-                    .setTitle("SnpeHelper")
+                    .setTitle("推理由Qualcomm-CPU完成")
                     .setMessage(Html.fromHtml(html))
                     .setCancelable(true)
                     .create().show()

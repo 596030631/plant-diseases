@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.view.KeyEvent
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -37,7 +38,7 @@ class MainActivity : FragmentActivity() {
 
         mainModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        mainModel.setFullscreen(window, true, false)
+        mainModel.setFullscreen(window, true, true)
 
         mainModel.initSharedPreference(this)
 
@@ -83,12 +84,23 @@ class MainActivity : FragmentActivity() {
         }, IMMERSIVE_FLAG_TIMEOUT)
     }
 
+    private var lastClick = 0L
+
     /** When key down event is triggered, relay it via local broadcast so fragments can handle it */
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
                 val intent = Intent(KEY_EVENT_ACTION).apply { putExtra(KEY_EVENT_EXTRA, keyCode) }
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                true
+            }
+            KeyEvent.KEYCODE_BACK -> {
+                if (System.currentTimeMillis() - lastClick < 3_000) {
+                    finish()
+                } else {
+                    Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show()
+                    lastClick = System.currentTimeMillis()
+                }
                 true
             }
             else -> super.onKeyDown(keyCode, event)
@@ -103,11 +115,13 @@ class MainActivity : FragmentActivity() {
     companion object {
         private const val tag = "MainActivity"
         private const val FACE_PERMISSION_QUEST_CAMERA = 1024
+
         /** Use external media if it is available, our app's file directory otherwise */
         fun getOutputDirectory(context: Context): File {
             val appContext = context.applicationContext
             val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() } }
+                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
+            }
             return if (mediaDir != null && mediaDir.exists())
                 mediaDir else appContext.filesDir
         }

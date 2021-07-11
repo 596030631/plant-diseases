@@ -31,17 +31,16 @@
 
     <ImageButton
         android:id="@+id/back_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="@dimen/margin_xsmall"
-        android:layout_marginTop="@dimen/margin_small"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/back_button_alt"
+        android:layout_width="@dimen/round_button_small"
+        android:layout_height="@dimen/round_button_small"
+        android:padding="@dimen/spacing_large"
         android:scaleType="fitCenter"
+        android:background="@drawable/ic_back"
         android:src="@drawable/ic_back"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_back" />
+        android:layout_margin="20sp"
+        android:contentDescription="@string/gallery_button_alt" />
 
     <ImageButton
         android:id="@+id/share_button"

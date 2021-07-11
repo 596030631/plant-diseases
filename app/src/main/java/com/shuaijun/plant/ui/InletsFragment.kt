@@ -21,12 +21,6 @@ class InletsFragment : BaseFragment() {
     private lateinit var binding: FragmentInletsBinding
     private lateinit var execute: Executor
     private lateinit var loading: KProgressHUD
-//    private lateinit var loading: AlertDialog
-//    private lateinit var loadingBinding: LoadingBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +70,8 @@ class InletsFragment : BaseFragment() {
                     TextUtils.equals(user, userSaved) && TextUtils.equals(passwd, passwdSaved)
                 if (success) {
                     showSuccess()
-                    Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(InletsFragmentDirections.actionInletsFragmentToPermissionsFragment())
+                    Navigation.findNavController(requireActivity(), R.id.fragment_container)
+                        .navigate(InletsFragmentDirections.actionInletsFragmentToPermissionsFragment())
 //                    mainModel.fragmentManager.beginTransaction()
 //                        .replace(R.id.fragment_container, HomeFragment.newInstance()).commit()
                 } else showFailed()
@@ -98,7 +93,7 @@ class InletsFragment : BaseFragment() {
 
     private fun showSuccess() {
         requireActivity().runOnUiThread {
-            Toast.makeText(requireContext(), "登陆成功", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "验证成功", Toast.LENGTH_LONG).show()
         }
     }
 
