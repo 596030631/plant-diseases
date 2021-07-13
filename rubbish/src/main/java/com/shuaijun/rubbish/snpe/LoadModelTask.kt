@@ -1,13 +1,11 @@
 package com.shuaijun.rubbish.snpe
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import com.qualcomm.qti.snpe.NeuralNetwork
 import com.qualcomm.qti.snpe.NeuralNetwork.RuntimeCheckOption
 import com.qualcomm.qti.snpe.SNPE.NeuralNetworkBuilder
 import java.util.*
-import kotlin.ConcurrentModificationException
 
 class LoadModelTask {
 
@@ -23,7 +21,7 @@ class LoadModelTask {
             }
         }
         labelInput.close()
-        val modelInput = ctx.assets.open("effect.dlc")
+        val modelInput = ctx.assets.open("rubbish.dlc")
         val builder = NeuralNetworkBuilder(ctx)
             .setDebugEnabled(false)
             .setRuntimeOrder(NeuralNetwork.Runtime.CPU)

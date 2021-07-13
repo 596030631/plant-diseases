@@ -131,26 +131,6 @@ class ImageDetectionFloat {
         return original
     }
 
-    fun getMin(array: FloatArray): Float {
-        var min = Float.MAX_VALUE
-        for (value in array) {
-            if (value < min) {
-                min = value
-            }
-        }
-        return min
-    }
-
-    fun getMax(array: FloatArray): Float {
-        var max = Float.MIN_VALUE
-        for (value in array) {
-            if (value > max) {
-                max = value
-            }
-        }
-        return max
-    }
-
 
     companion object {
         private const val TAG = "ImageDetectionFloat"

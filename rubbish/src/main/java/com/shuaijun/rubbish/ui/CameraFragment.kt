@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.graphics.Outline
+import android.graphics.Path
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -16,8 +18,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.shuaijun.rubbish.R
 import com.shuaijun.rubbish.databinding.FragmentCameraBinding
+import com.shuaijun.rubbish.databinding.ItemCameraLabelBinding
 import com.shuaijun.rubbish.snpe.ImageDetectionFloat
 import com.shuaijun.rubbish.snpe.YuvToRgbConverter
 import kotlinx.android.synthetic.main.activity_login.*
@@ -40,6 +44,7 @@ class CameraFragment : Fragment() {
     private val rotation = Surface.ROTATION_90
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
+    private val labelList = mutableListOf<String>()
 
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
@@ -48,6 +53,13 @@ class CameraFragment : Fragment() {
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private lateinit var binding: FragmentCameraBinding
+    private val adapter: Adapter<String, ItemCameraLabelBinding> by lazy {
+        Adapter(labelList, { v, p ->
+            v.label.text = labelList[p]
+        }, { p ->
+            ViewHolder(ItemCameraLabelBinding.inflate(LayoutInflater.from(p.context), p, false))
+        })
+    }
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -117,6 +129,8 @@ class CameraFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         convert = YuvToRgbConverter(requireContext())
+        binding.recyclerview.adapter = adapter
+        binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
     }
 
     /** Initialize CameraX, and prepare to bind the camera use cases  */
@@ -172,9 +186,10 @@ class CameraFragment : Fragment() {
                     // We log image analysis results here - you should do something useful
                     // instead!
                     Log.d(TAG, "Average luminosity: $luma")
-                    binding.labelAnalysis.post {
-                        binding.labelAnalysis.append(luma)
-                        binding.labelAnalysis.append("\n")
+                    if (labelList.size > 10) labelList.clear()
+                    labelList.add(luma)
+                    binding.recyclerview.post {
+                        adapter.notifyDataSetChanged()
                     }
                 })
             }
@@ -188,6 +203,12 @@ class CameraFragment : Fragment() {
                 this, cameraSelector, preview, imageCapture, imageAnalyzer
             )
 
+            binding.viewFinder.outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(p0: View, p1: Outline) {
+                    p1.setOval(0, 0, p0.width, p0.height)
+                }
+            }
+            binding.viewFinder.clipToOutline = true
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(binding.viewFinder.createSurfaceProvider())
         } catch (exc: Exception) {
