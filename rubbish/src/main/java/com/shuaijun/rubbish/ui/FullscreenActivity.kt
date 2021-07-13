@@ -1,37 +1,29 @@
-package com.shuaijun.rubbish
+package com.shuaijun.rubbish.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.shuaijun.rubbish.MainViewModel
+import com.shuaijun.rubbish.R
 import com.shuaijun.rubbish.databinding.ActivityFullscreenBinding
 import java.io.File
 
 const val KEY_EVENT_ACTION = "key_event_action"
 const val KEY_EVENT_EXTRA = "key_event_extra"
-private const val IMMERSIVE_FLAG_TIMEOUT = 500L
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 class FullscreenActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFullscreenBinding
 
-    //    private lateinit var fullscreenContent: TextView
-//    private lateinit var fullscreenContentControls: LinearLayout
-    private val hideHandler = Handler()
+    private val hideHandler = Handler(Looper.getMainLooper())
 
-    @SuppressLint("InlinedApi")
-    private val hidePart2Runnable = Runnable {
-
-    }
     private val showPart2Runnable = Runnable {
         // Delayed display of UI elements
         supportActionBar?.show()
@@ -87,12 +79,10 @@ class FullscreenActivity : AppCompatActivity() {
         supportActionBar?.hide()
         isFullscreen = false
         hideHandler.removeCallbacks(showPart2Runnable)
-        hideHandler.postDelayed(hidePart2Runnable, UI_ANIMATION_DELAY.toLong())
     }
 
     private fun show() {
         isFullscreen = true
-        hideHandler.removeCallbacks(hidePart2Runnable)
         hideHandler.postDelayed(showPart2Runnable, UI_ANIMATION_DELAY.toLong())
     }
 

@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="com.shuaijun.rubbish.PermissionsFragment"
+        android:name="com.shuaijun.rubbish.ui.PermissionsFragment"
         android:label="PermissionsFragment">
         <action
             android:id="@+id/action_permissions_fragment_to_camera_fragment"
@@ -15,7 +15,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.shuaijun.rubbish.CameraFragment"
+        android:name="com.shuaijun.rubbish.ui.CameraFragment"
         android:label="CameraFragment">
 
         <action

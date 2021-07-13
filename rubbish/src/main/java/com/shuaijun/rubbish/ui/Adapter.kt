@@ -1,4 +1,4 @@
-package com.shuaijun.plant.util
+package com.shuaijun.rubbish.ui
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

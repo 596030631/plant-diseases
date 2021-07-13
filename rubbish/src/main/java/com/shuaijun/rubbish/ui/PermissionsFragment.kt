@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shuaijun.rubbish
+package com.shuaijun.rubbish.ui
 
 import android.Manifest
 import android.content.Context
@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.shuaijun.rubbish.R
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -43,7 +44,8 @@ class PermissionsFragment : Fragment() {
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         } else {
             // If permissions have already been granted, proceed
-            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(PermissionsFragmentDirections.actionPermissionsFragmentToCameraFragment())
+            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
+                PermissionsFragmentDirections.actionPermissionsFragmentToCameraFragment())
         }
     }
 
