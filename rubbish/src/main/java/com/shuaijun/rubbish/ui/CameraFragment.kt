@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -15,7 +16,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
+import com.shuaijun.rubbish.R
 import com.shuaijun.rubbish.databinding.FragmentCameraBinding
+import com.shuaijun.rubbish.snpe.ImageDetectionFloat
+import com.shuaijun.rubbish.snpe.YuvToRgbConverter
+import kotlinx.android.synthetic.main.activity_login.*
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -26,13 +31,13 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import  com.shuaijun.rubbish.R
 
 /** Helper type alias used for analysis use case callbacks */
-typealias LumaListener = (luma: Double) -> Unit
+typealias LumaListener = (luma: String) -> Unit
 
 class CameraFragment : Fragment() {
 
+    private val rotation = Surface.ROTATION_90
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
 
@@ -108,6 +113,12 @@ class CameraFragment : Fragment() {
         outputDirectory = FullscreenActivity.getOutputDirectory(requireContext())
     }
 
+    private lateinit var convert: YuvToRgbConverter
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        convert = YuvToRgbConverter(requireContext())
+    }
+
     /** Initialize CameraX, and prepare to bind the camera use cases  */
     private fun setUpCamera() {
         Log.d("et_log", "setUpCamera")
@@ -133,7 +144,7 @@ class CameraFragment : Fragment() {
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
         preview = Preview.Builder()
             .setTargetAspectRatio(screenAspectRatio)
-            .setTargetRotation(Surface.ROTATION_0)
+            .setTargetRotation(rotation)
             .build()
         // ImageCapture
         imageCapture = ImageCapture.Builder()
@@ -143,7 +154,7 @@ class CameraFragment : Fragment() {
             .setTargetAspectRatio(screenAspectRatio)
             // Set initial target rotation, we will have to call this again if rotation changes
             // during the lifecycle of this use case
-            .setTargetRotation(Surface.ROTATION_0)
+            .setTargetRotation(rotation)
             .build()
 
         // ImageAnalysis
@@ -152,18 +163,21 @@ class CameraFragment : Fragment() {
             .setTargetAspectRatio(screenAspectRatio)
             // Set initial target rotation, we will have to call this again if rotation changes
             // during the lifecycle of this use case
-            .setTargetRotation(Surface.ROTATION_0)
+            .setTargetRotation(rotation)
             .build()
             // The analyzer can then be assigned to the instance
             .also {
-                it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
+                it.setAnalyzer(cameraExecutor, LuminosityAnalyzer(convert) { luma ->
                     // Values returned from our analyzer are passed to the attached listener
                     // We log image analysis results here - you should do something useful
                     // instead!
                     Log.d(TAG, "Average luminosity: $luma")
+                    binding.labelAnalysis.post {
+                        binding.labelAnalysis.append(luma)
+                        binding.labelAnalysis.append("\n")
+                    }
                 })
             }
-
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll()
 
@@ -350,7 +364,11 @@ class CameraFragment : Fragment() {
      * <p>All we need to do is override the function `analyze` with our desired operations. Here,
      * we compute the average luminosity of the image by looking at the Y plane of the YUV frame.
      */
-    private class LuminosityAnalyzer(listener: LumaListener? = null) : ImageAnalysis.Analyzer {
+    private class LuminosityAnalyzer(
+        val convert: YuvToRgbConverter,
+        listener: LumaListener? = null
+    ) : ImageAnalysis.Analyzer {
+        private var bitmapBuffer: Bitmap? = null
         private val frameRateWindow = 8
         private val frameTimestamps = ArrayDeque<Long>(5)
         private val listeners = ArrayList<LumaListener>().apply { listener?.let { add(it) } }
@@ -421,12 +439,22 @@ class CameraFragment : Fragment() {
             // Convert the data into an array of pixel values ranging 0-255
             val pixels = data.map { it.toInt() and 0xFF }
 
+            Log.e("et_log", "len = " + pixels.size)
             // Compute average luminance for the image
             val luma = pixels.average()
 
-            // Call all listeners with new value
-            listeners.forEach { it(luma) }
-
+            image.apply {
+                if (bitmapBuffer == null) bitmapBuffer =
+                    Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+                convert.yuvToRgb(this, bitmapBuffer!!)
+                ImageDetectionFloat.getInstance().detection(bitmapBuffer!!) {
+                    it.forEach { result ->
+                        Log.e("et_log", result)
+                        // Call all listeners with new value
+                        listeners.forEach { it(result) }
+                    }
+                }
+            }
             image.close()
         }
     }

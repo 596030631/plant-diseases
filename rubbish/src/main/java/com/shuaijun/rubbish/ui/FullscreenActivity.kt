@@ -60,6 +60,8 @@ class FullscreenActivity : AppCompatActivity() {
         mainViewModel.setFullscreen(window, false, false)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         isFullscreen = true
+
+        mainViewModel.loadModel(application)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

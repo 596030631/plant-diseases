@@ -51,8 +51,7 @@ class ImageDetectionFloat {
                     Log.d(TAG, "key=$key  array.size=${array.size}")
 
                     for (pair in topK(1, array)) {
-                        result.add(labels[pair.first] ?: "unknown")
-                        result.add(pair.second.toString())
+                        result.add("${mJavaExecuteTime}ms ${labels[pair.first]}")
                     }
                     call(result)
                 }

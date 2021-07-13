@@ -1,5 +1,6 @@
 package com.shuaijun.rubbish
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
@@ -8,6 +9,8 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.shuaijun.rubbish.snpe.LoadModelTask
+import java.lang.Appendable
 
 data class ImageInputData(val id: Long, var path: String, var info: String)
 
@@ -54,6 +57,10 @@ class MainViewModel() : ViewModel() {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.navigationBarColor = color
         window.statusBarColor = color
+    }
+
+    fun loadModel(ctx: Application) {
+        LoadModelTask.getInstance().loadNetwork(ctx)
     }
 
 }
