@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">plant</string>
+    <string name="title_home">识别</string>
+    <string name="title_dashboard">知识库</string>
+</resources>
