@@ -14,7 +14,7 @@ class ImageDetectionFloat {
 
     fun available() = !detectLock.get()
 
-    fun detection(image: Bitmap, call: (MutableList<String>) -> Unit) {
+    fun detection(image: Bitmap, call: (Array<String?>) -> Unit) {
         synchronized(detectLock) {
             if (!available()) return
             detectLock.set(true)
@@ -27,7 +27,6 @@ class ImageDetectionFloat {
             check(!(inputNames.size != 1 || outputNames.size != 1)) { "Invalid network input and/or output tensors." }
             val mInputLayer: String = inputNames.iterator().next()
             val mOutputLayer = outputNames.iterator().next()
-            val result: MutableList<String> = LinkedList()
             val shapeMap: Map<String, IntArray> = it.inputTensorsShapes
             val ints: IntArray = shapeMap[mInputLayer] ?: return
             val tensor: FloatTensor = it.createFloatTensor(*ints)
@@ -41,19 +40,17 @@ class ImageDetectionFloat {
             val outputs: Map<String, FloatTensor> = it.execute(inputs)
             val javaExecuteEnd = SystemClock.elapsedRealtime()
             val mJavaExecuteTime = javaExecuteEnd - javaExecuteStart
-            Logger.d("识别耗时:${mJavaExecuteTime}ms")
 
             val labels = LoadModelTask.getInstance().labels
             for ((key, outputTensor) in outputs) {
                 if (key == mOutputLayer) {
                     val array = FloatArray(outputTensor.size)
                     outputTensor.read(array, 0, array.size)
-                    Log.d(TAG, "key=$key  array.size=${array.size}")
-
                     for (pair in topK(1, array)) {
-                        result.add("${mJavaExecuteTime}ms ${labels[pair.first]}")
+                        val result =
+                            arrayOf(labels[pair.first], String.format("%03d", mJavaExecuteTime / 3))
+                        call(result)
                     }
-                    call(result)
                 }
             }
             releaseTensors(inputs, outputs)
@@ -129,6 +126,26 @@ class ImageDetectionFloat {
 
     private fun preProcess(original: Float): Float {
         return original
+    }
+
+    fun getMin(array: FloatArray): Float {
+        var min = Float.MAX_VALUE
+        for (value in array) {
+            if (value < min) {
+                min = value
+            }
+        }
+        return min
+    }
+
+    fun getMax(array: FloatArray): Float {
+        var max = Float.MIN_VALUE
+        for (value in array) {
+            if (value > max) {
+                max = value
+            }
+        }
+        return max
     }
 
 

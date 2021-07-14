@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="192.168.31.46"
-        android:textColor="@color/teal_700"
-        android:textSize="18sp" />
+        android:textStyle="italic"
+        android:text="有害垃圾:Harmful battle"
+        android:textColor="#00C853"
+        android:textSize="20sp" />
 </LinearLayout>

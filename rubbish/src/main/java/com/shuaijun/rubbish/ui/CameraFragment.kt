@@ -7,13 +7,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.Outline
-import android.graphics.Path
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -37,7 +37,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /** Helper type alias used for analysis use case callbacks */
-typealias LumaListener = (luma: String) -> Unit
+typealias LumaListener = (luma: Array<String?>) -> Unit
 
 class CameraFragment : Fragment() {
 
@@ -131,6 +131,15 @@ class CameraFragment : Fragment() {
         convert = YuvToRgbConverter(requireContext())
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
+
+        val params = binding.viewFinder.layoutParams as ConstraintLayout.LayoutParams
+        val windowManager = requireActivity().windowManager
+        val r = windowManager.defaultDisplay.height * 3 / 4
+        Log.e("et_log", "r = $r")
+        params.height = r
+        params.width = r
+        params.marginEnd = 30
+        binding.viewFinder.layoutParams = params
     }
 
     /** Initialize CameraX, and prepare to bind the camera use cases  */
@@ -185,11 +194,45 @@ class CameraFragment : Fragment() {
                     // Values returned from our analyzer are passed to the attached listener
                     // We log image analysis results here - you should do something useful
                     // instead!
+
+                    val info = luma[0]
+                    val category: String
+                    if (info != null) {
+                        if (info.startsWith("KitchenWaste")) {
+                            category = "厨余垃圾"
+                        } else if (info.startsWith("Recyclable")) {
+                            category = "可回收垃圾"
+                        } else if (info.startsWith("Other")) {
+                            category = "其他垃圾"
+                        } else if (info.startsWith("Harmful")) {
+                            category = "有害垃圾"
+                        } else {
+                            category = "未知"
+                        }
+                    } else {
+                        category = "未知"
+                    }
+                    binding.timeUse.post { binding.timeUse.text = "耗时:${luma[1]}ms" }
+                    binding.category.post { binding.category.text = "类别:${category}" }
+                    binding.content.post { binding.content.text = "名称:${luma[0]}" }
                     Log.d(TAG, "Average luminosity: $luma")
-                    if (labelList.size > 10) labelList.clear()
-                    labelList.add(luma)
+                    if (labelList.size > 200) {
+                        labelList.iterator().apply {
+                            var i = 0
+                            while (hasNext()) {
+                                next()
+                                this.remove()
+                                if (i++ > 170) break
+                            }
+                        }
+                        binding.recyclerview.post {
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                    labelList.add("$category ${luma[0]}")
                     binding.recyclerview.post {
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyItemInserted(labelList.size)
+                        binding.recyclerview.scrollToPosition(labelList.size - 1)
                     }
                 })
             }
@@ -202,7 +245,6 @@ class CameraFragment : Fragment() {
             camera = cameraProvider.bindToLifecycle(
                 this, cameraSelector, preview, imageCapture, imageAnalyzer
             )
-
             binding.viewFinder.outlineProvider = object : ViewOutlineProvider() {
                 override fun getOutline(p0: View, p1: Outline) {
                     p1.setOval(0, 0, p0.width, p0.height)
@@ -459,8 +501,6 @@ class CameraFragment : Fragment() {
 
             // Convert the data into an array of pixel values ranging 0-255
             val pixels = data.map { it.toInt() and 0xFF }
-
-            Log.e("et_log", "len = " + pixels.size)
             // Compute average luminance for the image
             val luma = pixels.average()
 
@@ -468,11 +508,9 @@ class CameraFragment : Fragment() {
                 if (bitmapBuffer == null) bitmapBuffer =
                     Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
                 convert.yuvToRgb(this, bitmapBuffer!!)
-                ImageDetectionFloat.getInstance().detection(bitmapBuffer!!) {
-                    it.forEach { result ->
-                        Log.e("et_log", result)
-                        // Call all listeners with new value
-                        listeners.forEach { it(result) }
+                ImageDetectionFloat.getInstance().detection(bitmapBuffer!!) { result ->
+                    listeners.forEach {
+                        it(result)
                     }
                 }
             }

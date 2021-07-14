@@ -21,9 +21,7 @@ class ImageDetectionInt8 {
             if (!available()) return
             detectLock.set(true)
         }
-        Logger.d("开始识别图片")
         LoadModelTask.getInstance().neuralNetwork?.let { neural ->
-            Logger.d("网络已加载")
             val inputNames: Set<String> = neural.inputTensorsNames
             val outputNames: Set<String> = neural.outputTensorsNames
             check(!(inputNames.size != 1 || outputNames.size != 1)) { "Invalid network input and/or output tensors." }
@@ -33,6 +31,7 @@ class ImageDetectionInt8 {
 
             val inputTensors: MutableMap<String, TF8UserBufferTensor> = HashMap()
             val outputTensors: MutableMap<String, TF8UserBufferTensor> = HashMap()
+
             val inputBuffers: MutableMap<String, ByteBuffer> = HashMap()
             val outputBuffers: MutableMap<String, ByteBuffer> = HashMap()
             val inputAttributes: TensorAttributes = neural.getTensorAttributes(mInputLayer)
@@ -44,6 +43,7 @@ class ImageDetectionInt8 {
 
             val inputBuffer = inputBuffers[mInputLayer] ?: return
             quantize(rgbBitmapAsFloat, inputBuffer, inputParams)
+
             inputTensors[mInputLayer] = neural.createTF8UserBufferTensor(
                 inputParams.size, inputParams.strides,
                 inputParams.stepExactly0, inputParams.stepSize,
@@ -62,13 +62,12 @@ class ImageDetectionInt8 {
                 outputBuffers[mOutputLayer]
             )
 
-
             val javaExecuteStart = SystemClock.elapsedRealtime()
             val status = neural.execute(inputTensors, outputTensors)
             val javaExecuteEnd = SystemClock.elapsedRealtime()
             if (!status) return
             var mJavaExecuteTime = javaExecuteEnd - javaExecuteStart
-            val outputValues = dequantize(outputTensors[mOutputLayer], outputBuffers[mOutputLayer])
+            val outputValues = deQuantize(outputTensors[mOutputLayer], outputBuffers[mOutputLayer])
 
             val labels = LoadModelTask.getInstance().labels
 
@@ -157,7 +156,7 @@ class ImageDetectionInt8 {
         val encoding = getTf8Encoding(src)
         val quantized = ByteArray(src.size)
         for (i in src.indices) {
-            var data = Math.max(Math.min(src[i], encoding.max), encoding.min)
+            var data = src[i].coerceAtMost(encoding.max).coerceAtLeast(encoding.min)
             data = data / encoding.delta - encoding.offset
             quantized[i] = Math.round(data).toByte()
         }
@@ -188,7 +187,7 @@ class ImageDetectionInt8 {
         return encoding
     }
 
-    private fun dequantize(tensor: TF8UserBufferTensor?, buffer: ByteBuffer?): FloatArray? {
+    private fun deQuantize(tensor: TF8UserBufferTensor?, buffer: ByteBuffer?): FloatArray? {
         if (buffer == null || tensor == null) return null
         val outputSize: Int = buffer.capacity()
         val quantizedArray = ByteArray(outputSize)
@@ -215,7 +214,7 @@ class ImageDetectionInt8 {
         return Tf8Params(bufferSize, strides)
     }
 
-    private class Tf8Params internal constructor(var size: Int, var strides: IntArray) {
+    private class Tf8Params(var size: Int, var strides: IntArray) {
         var stepExactly0 = 0
         var stepSize = 0f
     }
@@ -228,7 +227,7 @@ class ImageDetectionInt8 {
     }
 
 
-    fun getMin(array: FloatArray): Float {
+    private fun getMin(array: FloatArray): Float {
         var min = Float.MAX_VALUE
         for (value in array) {
             if (value < min) {
@@ -238,7 +237,7 @@ class ImageDetectionInt8 {
         return min
     }
 
-    fun getMax(array: FloatArray): Float {
+    private fun getMax(array: FloatArray): Float {
         var max = Float.MIN_VALUE
         for (value in array) {
             if (value > max) {

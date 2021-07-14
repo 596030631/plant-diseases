@@ -1,217 +1,146 @@
-pepper_rphy
-pepper_anth
-garlic_white
-ginger_sheath
-pepper_powdery
-rice_brown
-garlic_purple
-wheat_sheath
-citrus_anth
-garlic_virus
-banana_scab
-ginger_anth
-rice_sheath
-pepper_gray
-potato_early
-garlic_rphy
-wheat_rax
-ginger_stalk
-onion_downy
-wheat_rust
-banana_top
-garlic_rust
-rice_streak
-citrus_mela
-citrus_canker
-wheat_powdery
-pepper_virus
-onion_soft
-pepper_brown
-banana_black
-rice_disease
-potato_ring
-wheat_redbil
-potato_late
-citrus_shoot
-ginger_bacrax
-rice_blast
-citrus_yellow
-onion_purple
-onion_rust
-potato_scab
-banana_leaf
-ginger_rot
-onion_rphy
-wheat_takeall
-citrus_scab
-banana_wilt
-garlic_rax
-potato_black
-rice_smut
-potato_viral
-banana_anth
-onion_gray
-ginger_spot
-aaaaaaaaaaaaaa
-pepper_rphy
-pepper_anth
-garlic_white
-ginger_sheath
-pepper_powdery
-rice_brown
-garlic_purple
-wheat_sheath
-citrus_anth
-garlic_virus
-banana_scab
-ginger_anth
-rice_sheath
-pepper_gray
-potato_early
-garlic_rphy
-wheat_rax
-ginger_stalk
-onion_downy
-wheat_rust
-banana_top
-garlic_rust
-rice_streak
-citrus_mela
-citrus_canker
-wheat_powdery
-pepper_virus
-onion_soft
-pepper_brown
-banana_black
-rice_disease
-potato_ring
-wheat_redbil
-potato_late
-citrus_shoot
-ginger_bacrax
-rice_blast
-citrus_yellow
-onion_purple
-onion_rust
-potato_scab
-banana_leaf
-ginger_rot
-onion_rphy
-wheat_takeall
-citrus_scab
-banana_wilt
-garlic_rax
-potato_black
-rice_smut
-potato_viral
-banana_anth
-onion_gray
-ginger_spot
-pepper_rphy
-pepper_anth
-garlic_white
-ginger_sheath
-pepper_powdery
-rice_brown
-garlic_purple
-wheat_sheath
-citrus_anth
-garlic_virus
-banana_scab
-ginger_anth
-rice_sheath
-pepper_gray
-potato_early
-garlic_rphy
-wheat_rax
-ginger_stalk
-onion_downy
-wheat_rust
-banana_top
-garlic_rust
-rice_streak
-citrus_mela
-citrus_canker
-wheat_powdery
-pepper_virus
-onion_soft
-pepper_brown
-banana_black
-rice_disease
-potato_ring
-wheat_redbil
-potato_late
-citrus_shoot
-ginger_bacrax
-rice_blast
-citrus_yellow
-onion_purple
-onion_rust
-potato_scab
-banana_leaf
-ginger_rot
-onion_rphy
-wheat_takeall
-citrus_scab
-banana_wilt
-garlic_rax
-potato_black
-rice_smut
-potato_viral
-banana_anth
-onion_gray
-ginger_spot
-pepper_rphy
-pepper_anth
-garlic_white
-ginger_sheath
-pepper_powdery
-rice_brown
-garlic_purple
-wheat_sheath
-citrus_anth
-garlic_virus
-banana_scab
-ginger_anth
-rice_sheath
-pepper_gray
-potato_early
-garlic_rphy
-wheat_rax
-ginger_stalk
-onion_downy
-wheat_rust
-banana_top
-garlic_rust
-rice_streak
-citrus_mela
-citrus_canker
-wheat_powdery
-pepper_virus
-onion_soft
-pepper_brown
-banana_black
-rice_disease
-potato_ring
-wheat_redbil
-potato_late
-citrus_shoot
-ginger_bacrax
-rice_blast
-citrus_yellow
-onion_purple
-onion_rust
-potato_scab
-banana_leaf
-ginger_rot
-onion_rphy
-wheat_takeall
-citrus_scab
-banana_wilt
-garlic_rax
-potato_black
-rice_smut
-potato_viral
-banana_anth
-onion_gray
-ginger_spot
+KitchenWaste_mixed congee
+KitchenWaste_iceCream
+KitchenWaste_candiedGourdOnStick
+KitchenWaste_Coffee
+KitchenWaste_Cherry Tomatoes
+KitchenWaste_nut
+KitchenWaste_Chocolates
+KitchenWaste_jelly
+KitchenWaste_Walnut
+KitchenWaste_orange
+KitchenWaste_Leftovers
+KitchenWaste_Fruits
+KitchenWaste_pickled cabbage
+KitchenWaste_pitaya
+KitchenWaste_Roast Chicken
+KitchenWaste_melon seed
+KitchenWaste_tomato
+KitchenWaste_Straw cup
+KitchenWaste_Straw bowl
+KitchenWaste_Vermicelli
+KitchenWaste_strawberry
+KitchenWaste_pineapple
+KitchenWaste_French fries
+KitchenWaste_Potato chips
+KitchenWaste_Mushroom
+KitchenWaste_Egg Tart
+KitchenWaste_Bean curd
+KitchenWaste_Chicken wings
+Recyclable_Stainless Steel Products
+Recyclable_table tennis bat
+Recyclable_book
+Recyclable_Weighing scale
+Recyclable_vacuum cup
+Recyclable_envelope
+Recyclable_Charging head
+Recyclable_portable battery
+Recyclable_Rechargeable toothbrush
+Recyclable_Charging line
+Recyclable_Cycling
+Recyclable_card
+Recyclable_Desk lamp
+Recyclable_Tag
+Recyclable_hair drier
+Recyclable_globe
+Recyclable_Subway ticket
+Recyclable_solar heater
+Recyclable_ruler
+Recyclable_Nylon rope
+Recyclable_Hat
+Recyclable_Wrist watch
+Recyclable_Bracelet
+Recyclable_printer
+Recyclable_tyre pump
+Recyclable_Floor sweeping robot
+Recyclable_Empty bottle of skin care products
+Recyclable_Draw bar box
+Recyclable_slipper
+Recyclable_patch board
+Recyclable_radio
+Recyclable_hot pack
+Recyclable_telescope
+Recyclable_Wooden cutting board
+Recyclable_Cask
+Recyclable_Wooden comb
+Recyclable_Wooden spatula
+Recyclable_Wood carving
+Recyclable_pillow
+Recyclable_Table
+Recyclable_mould
+Recyclable_kettle
+Recyclable_sofa
+Recyclable_Fire Extinguisher
+Recyclable_Lampshade
+Recyclable_ashtray
+Recyclable_Hot water bottle
+Recyclable_Gas stove
+Recyclable_Gas cylinder
+Recyclable_Glassware
+Recyclable_Glass bottles
+Recyclable_Glass ball
+Recyclable_Yoga ball
+Recyclable_Electric shaver
+Recyclable_Electric curling stick
+Recyclable_Electronic scale
+Recyclable_Electric iron
+Recyclable_Electromagnetic furnace
+Recyclable_Television
+Recyclable_Circuit board
+Recyclable_electric fan
+Recyclable_rice cooker
+Recyclable_boarding pass
+Recyclable_plate
+Recyclable_bowl
+Recyclable_magnet
+Recyclable_humidifier
+Recyclable_cage
+Recyclable_playing cards
+Recyclable_network card
+Recyclable_headset
+Recyclable_Socks
+Recyclable_trousers
+Recyclable_Calculator
+Recyclable_Microphone
+Recyclable_Soybean Milk machine
+Recyclable_tyre
+Recyclable_Measuring cup
+Recyclable_Wire ball
+Recyclable_Aluminum products
+Recyclable_lid
+Recyclable_keyboard
+Recyclable_Tweezers
+Recyclable_Alarm
+Recyclable_Umbrella
+Recyclable_shoes
+Recyclable_sound
+Recyclable_Mat
+Recyclable_fish tank
+Recyclable_mouse
+Other Waste_PE plastic bag
+Other Waste_sanitary cup
+Other Waste_Disposable cotton swab
+Other Waste_Bamboo stick
+Other Waste_sticky note
+Other Waste_Kitchen gloves
+Other Waste_Kitchen cloth
+Other Waste_Mask
+Other Waste_Bath towel
+Other Waste_Shell
+Other Waste_towel
+Other Waste_Wet wipes
+Other Waste_Cleaning cloth
+Other Waste_adhesive tape
+Other Waste_Flyswatter
+Other Waste_Teapot pieces
+Other Waste_Straw hat
+Other Waste_Pregnancy Test Kit
+Other Waste_Feather duster
+Harmful Waste_Insecticide
+Harmful Waste_Dry battery
+Harmful Waste_Battery board
+Harmful Waste_The button battery
+Harmful Waste_glue
+Harmful Waste_Drug packaging
+Harmful Waste_pill
+Harmful Waste_ointment
+Harmful Waste_Battery
