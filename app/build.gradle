@@ -32,7 +32,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.sign
@@ -52,7 +52,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "plant-${versionName}.apk"
+        }
+    }
     buildFeatures {
         viewBinding true
     }

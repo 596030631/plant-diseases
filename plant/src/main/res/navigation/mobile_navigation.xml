@@ -9,10 +9,14 @@
         android:id="@+id/navigation_home"
         android:name="com.sj.plant.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_dashboard"
+            app:destination="@id/navigation_knowledge" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_knowledge"
         android:name="com.sj.plant.ui.knowledge.KnowledgeFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_knowledge" />

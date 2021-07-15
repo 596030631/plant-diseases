@@ -1,44 +1,80 @@
 package com.sj.plant.ui.knowledge
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.sj.plant.databinding.FragmentKnowledgeBinding
+import com.sj.plant.databinding.ItemKnowledgeBinding
+import com.sj.plant.util.Adapter
+import io.reactivex.rxjava3.core.Single
 
 class KnowledgeFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: KnowledgeViewModel
-    private var _binding: FragmentKnowledgeBinding? = null
+    private val viewModel: KnowledgeViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(KnowledgeViewModel::class.java)
+    }
+    private lateinit var adapter: Adapter<KnowledgeViewModel.Companion.ContentData, ItemKnowledgeBinding>
+    private lateinit var binding: FragmentKnowledgeBinding
+    private val listKnowledge: MutableList<KnowledgeViewModel.Companion.ContentData> by lazy {
+        viewModel.listKnowledge
+    }
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private val imm: InputMethodManager by lazy {
+        requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        dashboardViewModel =
-            ViewModelProvider(this).get(KnowledgeViewModel::class.java)
+    ): View = FragmentKnowledgeBinding.inflate(inflater, container, false).apply {
+        binding = this
+    }.root
 
-        _binding = FragmentKnowledgeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requireActivity().window.decorView.setOnSystemUiVisibilityChangeListener { visibility ->
+            val decorView = requireActivity().window.decorView
+            val uiOptions = decorView.systemUiVisibility
+            var newUiOptions = uiOptions
+            newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE
+            newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_FULLSCREEN
+            newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            decorView.systemUiVisibility = newUiOptions
+        }
 
-//        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
-//            textView.text = it
+        viewModel.analysisData.observe(viewLifecycleOwner) {
+            binding.editSearch.setText(it.result[1])
+        }
+
+        binding.root.setOnClickListener {
+            imm.hideSoftInputFromWindow(binding.editSearch.windowToken, 0)
+        }
+        binding.btnSelect.setOnClickListener {
+            imm.hideSoftInputFromWindow(binding.editSearch.windowToken, 0)
+
+        }
+        adapter = Adapter(listKnowledge, { v, p ->
+            v.title.text = listKnowledge[p].title
+            v.content.text = listKnowledge[p].content
+        }, { p ->
+            ItemKnowledgeBinding.inflate(LayoutInflater.from(p.context), p, false)
         })
-        return root
+        binding.recyclerview.adapter = adapter
+        binding.recyclerview.layoutManager = LinearLayoutManager(requireContext()).apply {
+            orientation = LinearLayoutManager.VERTICAL
+        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onResume() {
+        super.onResume()
+        viewModel.search()
     }
 }
