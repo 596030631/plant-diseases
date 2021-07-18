@@ -10,4 +10,7 @@
     <color name="grey">#E2E3E4</color>
     <color name="grey_deep">#A69450</color>
     <color name="black_less">#292B2C</color>
+    <color name="green">#01BA5C</color>
+    <color name="green_teal">#01A195</color>
+    <color name="teal">#018DC1</color>
 </resources>
