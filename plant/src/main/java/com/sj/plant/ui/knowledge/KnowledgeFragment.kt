@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sj.plant.databinding.FragmentKnowledgeBinding
 import com.sj.plant.databinding.ItemKnowledgeBinding
 import com.sj.plant.util.Adapter
-import io.reactivex.rxjava3.core.Single
 
 class KnowledgeFragment : Fragment() {
 
@@ -63,7 +63,14 @@ class KnowledgeFragment : Fragment() {
         }
         adapter = Adapter(listKnowledge, { v, p ->
             v.title.text = listKnowledge[p].title
-            v.content.text = listKnowledge[p].content
+            v.content.text = listKnowledge[p].detail
+
+            v.root.setOnClickListener {
+                viewModel.knowledgeSelect = listKnowledge[p]
+                Navigation.findNavController(it)
+                    .navigate(KnowledgeFragmentDirections.actionNavigationKnowledgeToDetailFragment())
+            }
+
         }, { p ->
             ItemKnowledgeBinding.inflate(LayoutInflater.from(p.context), p, false)
         })
