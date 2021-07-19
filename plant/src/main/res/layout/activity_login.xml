@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:viewBindingIgnore="false"
     android:background="@drawable/login_bg"
     tools:context=".LoginActivity">
 
@@ -125,10 +126,12 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:background="@drawable/login_button"
+                android:padding="5dp"
                 android:text="注册/登录"
                 android:textColor="@color/white" />
 
@@ -168,11 +171,7 @@
                     android:src="@drawable/zhifubao" />
 
             </LinearLayout>
-
-
         </LinearLayout>
-
-
     </androidx.cardview.widget.CardView>
 
 
@@ -182,6 +181,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.35" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
