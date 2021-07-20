@@ -3,11 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sj.plant">
 
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="true"
+        tools:ignore="DuplicateUsesFeature" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
@@ -33,6 +36,15 @@
             tools:ignore="LockedOrientationActivity">
 
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.sj.plant.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

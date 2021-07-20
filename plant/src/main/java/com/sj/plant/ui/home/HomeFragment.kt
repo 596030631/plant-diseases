@@ -2,16 +2,21 @@ package com.sj.plant.ui.home
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -27,6 +32,10 @@ import com.sj.plant.util.Adapter
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -34,6 +43,8 @@ class HomeFragment : Fragment() {
     private val contentResolver by lazy {
         requireActivity().contentResolver
     }
+
+    private var photoFile: File? = null
 
     private val viewModel: HomeViewModel by lazy {
         ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
@@ -90,11 +101,12 @@ class HomeFragment : Fragment() {
             }
         }
         binding.openCamera.setOnClickListener {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-                resolveActivity(requireActivity().packageManager)?.also {
-                    startActivityForResult(this, REQUEST_IMAGE_CAPTURE)
-                }
-            }
+            dispatchTakePictureIntent()
+//            Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+//                resolveActivity(requireActivity().packageManager)?.also {
+//                    startActivityForResult(this, REQUEST_IMAGE_CAPTURE)
+//                }
+//            }
         }
         binding.btnAnalysis.setOnClickListener {
             if (ImageDetectionFloat.getInstance().available()) {
@@ -176,24 +188,124 @@ class HomeFragment : Fragment() {
         )
     }
 
+    private lateinit var currentPhotoPath: String
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(Date())
+        val storageDir: File? = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+                // Create the File where the photo should go
+                photoFile = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        requireContext(),
+                        "com.sj.plant.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d("et_log", "onActivityResult $requestCode")
+        Log.d("et_log", "onActivityResult $requestCode  $data")
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                photoFile?.let { it ->
+                    Single.just(it)
+                        .map {
+                            val bitmap = BitmapFactory.decodeFile(it.absolutePath)
+                            Bitmap.createScaledBitmap(
+                                bitmap,
+                                binding.image.width,
+                                binding.image.height,
+                                true
+                            )
+                        }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            binding.image.scaleType = ImageView.ScaleType.FIT_XY
+                            viewModel.bitmap.postValue(it)
+                        }, {
+                            Toast.makeText(
+                                requireContext(),
+                                it.message ?: return@subscribe,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        })
+                }
 
-            } else if (requestCode == CHOICE_FROM_ALBUM_REQUEST_CODE) {
                 val uri = data?.data
                 uri?.apply {
+                    Log.e("et_log", "uri=$this")
                     Single.just(this)
                         .map {
                             contentResolver.openInputStream(this).use {
                                 val bitmap = BitmapFactory.decodeStream(it)
-                                bitmap
+                                Bitmap.createScaledBitmap(
+                                    bitmap,
+                                    binding.image.width,
+                                    binding.image.height,
+                                    true
+                                )
                             }
                         }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
+                            binding.image.scaleType = ImageView.ScaleType.FIT_XY
+                            viewModel.bitmap.postValue(it)
+                        }, {
+                            Toast.makeText(
+                                requireContext(),
+                                it.message ?: return@subscribe,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        })
+                }
+
+            } else if (requestCode == CHOICE_FROM_ALBUM_REQUEST_CODE) {
+                val uri = data?.data
+                uri?.apply {
+                    Log.e("et_log", "uri=$this")
+                    Single.just(this)
+                        .map {
+                            contentResolver.openInputStream(this).use {
+                                val bitmap = BitmapFactory.decodeStream(it)
+                                Bitmap.createScaledBitmap(
+                                    bitmap,
+                                    binding.image.width,
+                                    binding.image.height,
+                                    true
+                                )
+                            }
+                        }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            binding.image.scaleType = ImageView.ScaleType.FIT_XY
                             viewModel.bitmap.postValue(it)
                         }, {
                             Toast.makeText(

@@ -59,7 +59,8 @@ class KnowledgeFragment : Fragment() {
         }
         binding.btnSelect.setOnClickListener {
             imm.hideSoftInputFromWindow(binding.editSearch.windowToken, 0)
-
+            viewModel.searchByName(binding.editSearch.editableText.toString())
+            adapter.notifyDataSetChanged()
         }
         adapter = Adapter(listKnowledge, { v, p ->
             v.title.text = listKnowledge[p].title

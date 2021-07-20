@@ -28,7 +28,7 @@
             android:layout_marginStart="3dp"
             android:text="虫害助手"
             android:textColor="@color/white"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
 
@@ -60,7 +60,7 @@
                 android:layout_marginTop="8dp"
                 android:text="Plant Helper"
                 android:textColor="@color/green_teal"
-                android:textSize="30sp"
+                android:textSize="28sp"
                 android:textStyle="bold" />
 
             <View
