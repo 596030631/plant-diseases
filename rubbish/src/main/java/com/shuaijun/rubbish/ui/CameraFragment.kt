@@ -245,12 +245,12 @@ class CameraFragment : Fragment() {
             camera = cameraProvider.bindToLifecycle(
                 this, cameraSelector, preview, imageCapture, imageAnalyzer
             )
-            binding.viewFinder.outlineProvider = object : ViewOutlineProvider() {
-                override fun getOutline(p0: View, p1: Outline) {
-                    p1.setOval(0, 0, p0.width, p0.height)
-                }
-            }
-            binding.viewFinder.clipToOutline = true
+//            binding.viewFinder.outlineProvider = object : ViewOutlineProvider() {
+//                override fun getOutline(p0: View, p1: Outline) {
+//                    p1.setOval(0, 0, p0.width, p0.height)
+//                }
+//            }
+//            binding.viewFinder.clipToOutline = true
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(binding.viewFinder.createSurfaceProvider())
         } catch (exc: Exception) {
