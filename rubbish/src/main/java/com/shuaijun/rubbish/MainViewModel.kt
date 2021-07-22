@@ -10,7 +10,7 @@ import android.view.WindowManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.shuaijun.rubbish.snpe.LoadModelTask
-import java.lang.Appendable
+import com.shuaijun.rubbish.ui.DataInfo
 
 data class ImageInputData(val id: Long, var path: String, var info: String)
 
@@ -61,6 +61,12 @@ class MainViewModel() : ViewModel() {
 
     fun loadModel(ctx: Application) {
         LoadModelTask.getInstance().loadNetwork(ctx)
+    }
+
+    val mutableDataInfoList = mutableListOf<DataInfo>()
+
+    fun putAnalHistory(dataInfo: DataInfo) {
+        mutableDataInfoList.add(dataInfo)
     }
 
 }

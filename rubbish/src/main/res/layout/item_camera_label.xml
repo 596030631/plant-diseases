@@ -8,10 +8,7 @@
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textStyle="italic"
         android:text="有害垃圾:Harmful battle"
-        android:textColor="#00C853"
-        android:textSize="20sp" />
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 </LinearLayout>

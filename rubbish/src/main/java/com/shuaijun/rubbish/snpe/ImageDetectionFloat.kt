@@ -48,7 +48,11 @@ class ImageDetectionFloat {
                     outputTensor.read(array, 0, array.size)
                     for (pair in topK(1, array)) {
                         val result =
-                            arrayOf(labels[pair.first], String.format("%03d", mJavaExecuteTime / 3))
+                            arrayOf(
+                                labels[pair.first],
+                                "${pair.second}",
+                                String.format("%03d", mJavaExecuteTime / 3)
+                            )
                         call(result)
                     }
                 }

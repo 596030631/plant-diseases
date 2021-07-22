@@ -6,25 +6,31 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
-import android.graphics.Outline
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.shuaijun.rubbish.MainViewModel
 import com.shuaijun.rubbish.R
 import com.shuaijun.rubbish.databinding.FragmentCameraBinding
 import com.shuaijun.rubbish.databinding.ItemCameraLabelBinding
 import com.shuaijun.rubbish.snpe.ImageDetectionFloat
 import com.shuaijun.rubbish.snpe.YuvToRgbConverter
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.fragment_camera.*
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -63,6 +69,9 @@ class CameraFragment : Fragment() {
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
+    private val mainModel: MainViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+    }
 
     /** Volume down button receiver used to trigger shutter */
     private val volumeDownReceiver = object : BroadcastReceiver() {
@@ -123,6 +132,15 @@ class CameraFragment : Fragment() {
         val filter = IntentFilter().apply { addAction(KEY_EVENT_ACTION) }
         broadcastManager.registerReceiver(volumeDownReceiver, filter)
         outputDirectory = FullscreenActivity.getOutputDirectory(requireContext())
+
+        binding.btnStart.setOnClickListener {
+            Toast.makeText(requireContext(), "启动成功", Toast.LENGTH_SHORT).show()
+            work = true
+        }
+        binding.btnStop.setOnClickListener {
+            work = false
+            Toast.makeText(requireContext(), "识别停止", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private lateinit var convert: YuvToRgbConverter
@@ -132,14 +150,47 @@ class CameraFragment : Fragment() {
         binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
 
-        val params = binding.viewFinder.layoutParams as ConstraintLayout.LayoutParams
-        val windowManager = requireActivity().windowManager
-        val r = windowManager.defaultDisplay.height * 3 / 4
-        Log.e("et_log", "r = $r")
-        params.height = r
-        params.width = r
-        params.marginEnd = 30
-        binding.viewFinder.layoutParams = params
+//        val params = binding.viewFinder.layoutParams as ConstraintLayout.LayoutParams
+//        val windowManager = requireActivity().windowManager
+//        val r = windowManager.defaultDisplay.height * 3 / 4
+//        Log.e("et_log", "r = $r")
+//        params.height = r
+//        params.width = r
+//        params.marginEnd = 30
+//        binding.viewFinder.layoutParams = params
+
+        binding.categorySpinner.adapter = ArrayAdapter(
+            requireActivity(), android.R.layout.simple_list_item_1, listCategory
+        )
+
+        binding.categorySpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    category = position
+                    Toast.makeText(
+                        requireContext(),
+                        "正在分拣:${listCategory.get(position)}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+            }
+
+        binding.spinner.adapter = ArrayAdapter(
+            requireActivity(), android.R.layout.simple_list_item_1, modelList
+        )
+        binding.btnHistory.setOnClickListener {
+            Navigation.findNavController(it)
+                .navigate(CameraFragmentDirections.actionCameraFragmentToHistoryFragment())
+        }
+
     }
 
     /** Initialize CameraX, and prepare to bind the camera use cases  */
@@ -189,47 +240,56 @@ class CameraFragment : Fragment() {
             .setTargetRotation(rotation)
             .build()
             // The analyzer can then be assigned to the instance
-            .also {
+            .also { it ->
                 it.setAnalyzer(cameraExecutor, LuminosityAnalyzer(convert) { luma ->
                     // Values returned from our analyzer are passed to the attached listener
                     // We log image analysis results here - you should do something useful
                     // instead!
 
-                    val info = luma[0]
-                    val category: String
-                    if (info != null) {
-                        if (info.startsWith("KitchenWaste")) {
-                            category = "厨余垃圾"
-                        } else if (info.startsWith("Recyclable")) {
-                            category = "可回收垃圾"
-                        } else if (info.startsWith("Other")) {
-                            category = "其他垃圾"
-                        } else if (info.startsWith("Harmful")) {
-                            category = "有害垃圾"
-                        } else {
-                            category = "未知"
-                        }
-                    } else {
-                        category = "未知"
-                    }
-                    binding.timeUse.post { binding.timeUse.text = "耗时:${luma[1]}ms" }
-                    binding.category.post { binding.category.text = "类别:${category}" }
-                    binding.content.post { binding.content.text = "名称:${luma[0]}" }
-                    Log.d(TAG, "Average luminosity: $luma")
-                    if (labelList.size > 200) {
-                        labelList.iterator().apply {
-                            var i = 0
-                            while (hasNext()) {
-                                next()
-                                this.remove()
-                                if (i++ > 170) break
+                    if (work) {
+
+
+                        when (category) {
+                            0 -> {
+                                createDataInfo(luma, "KitchenWaste")
+                            }
+                            1 -> {
+                                createDataInfo(luma, "Recyclable")
+                            }
+                            2 -> {
+                                createDataInfo(luma, "Other")
+                            }
+                            3 -> {
+                                createDataInfo(luma, "Harmful")
                             }
                         }
-                        binding.recyclerview.post {
-                            adapter.notifyDataSetChanged()
+
+
+                        Log.d(TAG, "Average luminosity: $luma")
+                        if (labelList.size > 200) {
+                            labelList.iterator().apply {
+                                var i = 0
+                                while (hasNext()) {
+                                    next()
+                                    this.remove()
+                                    if (i++ > 170) break
+                                }
+                            }
+                            binding.recyclerview.post {
+                                adapter.notifyDataSetChanged()
+                            }
                         }
+                        labelList.add(
+                            "${
+                                SimpleDateFormat(
+                                    "yyyy-MM-dd HH:mm:ss SSS",
+                                    Locale.CHINA
+                                ).format(System.currentTimeMillis())
+                            } ${luma[0]}"
+                        )
                     }
-                    labelList.add("$category ${luma[0]}")
+
+
                     binding.recyclerview.post {
                         adapter.notifyItemInserted(labelList.size)
                         binding.recyclerview.scrollToPosition(labelList.size - 1)
@@ -245,16 +305,71 @@ class CameraFragment : Fragment() {
             camera = cameraProvider.bindToLifecycle(
                 this, cameraSelector, preview, imageCapture, imageAnalyzer
             )
-//            binding.viewFinder.outlineProvider = object : ViewOutlineProvider() {
-//                override fun getOutline(p0: View, p1: Outline) {
-//                    p1.setOval(0, 0, p0.width, p0.height)
-//                }
-//            }
-//            binding.viewFinder.clipToOutline = true
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(binding.viewFinder.createSurfaceProvider())
         } catch (exc: Exception) {
             Log.e(TAG, "Use case binding failed", exc)
+        }
+    }
+
+    private fun createDataInfo(luma: Array<String?>, s: String) {
+        luma[0]?.let {
+            if (it.startsWith(s)) {
+                createFile()?.apply {
+                    luma.let { it1 ->
+                        it1[0]?.let { it2 ->
+                            it1[2]?.let { it3 ->
+                                DataInfo(
+                                    SimpleDateFormat(
+                                        "yyyy-MM-dd HH:mm:ss",
+                                        Locale.CHINA
+                                    ).format(System.currentTimeMillis()),
+                                    this.absolutePath,
+                                    it2, listCategory[0], it3
+                                ).apply {
+                                    mainModel.putAnalHistory(this)
+                                }
+                                takePicture(this)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun createFile(): File? {
+        return requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let {
+            File(it, "${System.currentTimeMillis()}$PHOTO_EXTENSION")
+        }
+    }
+
+    private fun takePicture(photoFile: File) {
+        imageCapture?.let { imageCapture ->
+            val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+                .build()
+            imageCapture.takePicture(
+                outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+                    override fun onError(exc: ImageCaptureException) {
+                        Log.e("TAG", "Photo capture failed: ${exc.message}", exc)
+                    }
+
+                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                        val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
+                        Log.d("TAG", "Photo capture succeeded: $savedUri")
+                    }
+                })
+
+//            // We can only change the foreground Drawable using API level 23+ API
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                // Display flash animation to indicate that photo was captured
+//                container.postDelayed({
+//                    container.foreground = ColorDrawable(Color.WHITE)
+//                    container.postDelayed(
+//                        { container.foreground = null }, ANIMATION_FAST_MILLIS
+//                    )
+//                }, ANIMATION_SLOW_MILLIS)
+//            }
         }
     }
 
@@ -276,140 +391,6 @@ class CameraFragment : Fragment() {
         }
         return AspectRatio.RATIO_16_9
     }
-
-    /** Method used to re-draw the camera UI controls, called every time configuration changes. */
-//    private fun updateCameraUi() {
-//
-//        // Remove previous UI if any
-//        container.findViewById<ConstraintLayout>(R.id.camera_ui_container)?.let {
-//            container.removeView(it)
-//        }
-//
-//        // Inflate a new view containing all UI for controlling the camera
-//        val controls = View.inflate(requireContext(), R.layout.camera_ui_container, container)
-//
-//        // In the background, load latest photo taken (if any) for gallery thumbnail
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            outputDirectory.listFiles { file ->
-//                EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
-//            }.maxOrNull()?.let {
-//                setGalleryThumbnail(Uri.fromFile(it))
-//            }
-//        }
-//
-//        // Listener for button used to capture photo
-//        controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
-//
-//            // Get a stable reference of the modifiable image capture use case
-//            imageCapture?.let { imageCapture ->
-//
-//                // Create output file to hold the image
-//                val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
-//
-//                // Setup image capture metadata
-//                val metadata = Metadata().apply {
-//
-//                    // Mirror image when using the front camera
-//                    isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
-//                }
-//
-//                // Create output options object which contains file + metadata
-//                val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
-//                    .setMetadata(metadata)
-//                    .build()
-//
-//                // Setup image capture listener which is triggered after photo has been taken
-//                imageCapture.takePicture(
-//                    outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
-//                        override fun onError(exc: ImageCaptureException) {
-//                            Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-//                        }
-//
-//                        override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-//                            val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
-//                            Log.d(TAG, "Photo capture succeeded: $savedUri")
-//
-//                            // We can only change the foreground Drawable using API level 23+ API
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                // Update the gallery thumbnail with latest picture taken
-//                                setGalleryThumbnail(savedUri)
-//                            }
-//
-//                            // Implicit broadcasts will be ignored for devices running API level >= 24
-//                            // so if you only target API level 24+ you can remove this statement
-//                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-//                                requireActivity().sendBroadcast(
-//                                    Intent(android.hardware.Camera.ACTION_NEW_PICTURE, savedUri)
-//                                )
-//                            }
-//
-//                            // If the folder selected is an external media directory, this is
-//                            // unnecessary but otherwise other apps will not be able to access our
-//                            // images unless we scan them using [MediaScannerConnection]
-//                            val mimeType = MimeTypeMap.getSingleton()
-//                                .getMimeTypeFromExtension(savedUri.toFile().extension)
-//                            MediaScannerConnection.scanFile(
-//                                context,
-//                                arrayOf(savedUri.toFile().absolutePath),
-//                                arrayOf(mimeType)
-//                            ) { _, uri ->
-//                                Log.d(TAG, "Image capture scanned into media store: $uri")
-//                            }
-//                        }
-//                    })
-//
-//                // We can only change the foreground Drawable using API level 23+ API
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//
-//                    // Display flash animation to indicate that photo was captured
-//                    container.postDelayed({
-//                        container.foreground = ColorDrawable(Color.WHITE)
-//                        container.postDelayed(
-//                            { container.foreground = null }, ANIMATION_FAST_MILLIS)
-//                    }, ANIMATION_SLOW_MILLIS)
-//                }
-//            }
-//        }
-//
-//        // Setup for button used to switch cameras
-//        controls.findViewById<ImageButton>(R.id.camera_switch_button).let {
-//
-//            // Disable the button until the camera is set up
-//            it.isEnabled = false
-//
-//            // Listener for button used to switch cameras. Only called if the button is enabled
-//            it.setOnClickListener {
-//                lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
-//                    CameraSelector.LENS_FACING_BACK
-//                } else {
-//                    CameraSelector.LENS_FACING_FRONT
-//                }
-//                // Re-bind use cases to update selected camera
-//                bindCameraUseCases()
-//            }
-//        }
-//
-//        // Listener for button used to view the most recent photo
-//        controls.findViewById<ImageButton>(R.id.photo_view_button).setOnClickListener {
-//            // Only navigate when the gallery has photos
-//            if (true == outputDirectory.listFiles()?.isNotEmpty()) {
-//                Navigation.findNavController(
-//                    requireActivity(), R.id.fragment_container
-//                ).navigate(BlankFragmentDirections
-//                    .actionCameraToGallery(outputDirectory.absolutePath))
-//            }
-//        }
-//    }
-
-//    /** Enabled or disabled a button to switch cameras depending on the available cameras */
-//    private fun updateCameraSwitchButton() {
-//        val switchCamerasButton = container.findViewById<ImageButton>(R.id.camera_switch_button)
-//        try {
-//            switchCamerasButton.isEnabled = hasBackCamera() && hasFrontCamera()
-//        } catch (exception: CameraInfoUnavailableException) {
-//            switchCamerasButton.isEnabled = false
-//        }
-//    }
 
     /** Returns true if the device has an available back camera. False otherwise */
     private fun hasBackCamera(): Boolean {
@@ -525,12 +506,16 @@ class CameraFragment : Fragment() {
         private const val PHOTO_EXTENSION = ".jpg"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
+        private val listCategory = arrayListOf("厨余垃圾", "可回收类", "其他垃圾", "有害垃圾")
+        private val modelList = arrayListOf("浮点模型", "量化模型")
+        private var work = false
+        private var category: Int = 0
 
-        /** Helper function used to create a timestamped file */
-        private fun createFile(baseFolder: File, format: String, extension: String) =
-            File(
-                baseFolder, SimpleDateFormat(format, Locale.US)
-                    .format(System.currentTimeMillis()) + extension
-            )
+//        /** Helper function used to create a timestamped file */
+//        private fun createFile(baseFolder: File, format: String, extension: String) =
+//            File(
+//                baseFolder, SimpleDateFormat(format, Locale.US)
+//                    .format(System.currentTimeMillis()) + extension
+//            )
     }
 }
