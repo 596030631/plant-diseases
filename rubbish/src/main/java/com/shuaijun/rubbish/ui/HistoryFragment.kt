@@ -49,7 +49,7 @@ class HistoryFragment : Fragment() {
             Navigation.findNavController(it).popBackStack()
         }
 
-        binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 2).apply {
+        binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 3).apply {
             orientation = GridLayoutManager.HORIZONTAL
         }
         binding.recyclerview.adapter =
