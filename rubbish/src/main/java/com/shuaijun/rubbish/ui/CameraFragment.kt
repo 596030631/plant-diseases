@@ -247,23 +247,20 @@ class CameraFragment : Fragment() {
                     // instead!
 
                     if (work) {
-
-
                         when (category) {
                             0 -> {
-                                createDataInfo(luma, "KitchenWaste")
+                                createDataInfo(luma, "KitchenWaste", listCategory[0])
                             }
                             1 -> {
-                                createDataInfo(luma, "Recyclable")
+                                createDataInfo(luma, "Recyclable", listCategory[1])
                             }
                             2 -> {
-                                createDataInfo(luma, "Other")
+                                createDataInfo(luma, "Other", listCategory[2])
                             }
                             3 -> {
-                                createDataInfo(luma, "Harmful")
+                                createDataInfo(luma, "Harmful", listCategory[3])
                             }
                         }
-
 
                         Log.d(TAG, "Average luminosity: $luma")
                         if (labelList.size > 200) {
@@ -272,7 +269,7 @@ class CameraFragment : Fragment() {
                                 while (hasNext()) {
                                     next()
                                     this.remove()
-                                    if (i++ > 170) break
+                                    if (i++ > 150) break
                                 }
                             }
                             binding.recyclerview.post {
@@ -312,20 +309,22 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private fun createDataInfo(luma: Array<String?>, s: String) {
+    private fun createDataInfo(luma: Array<String?>, name: String, categoryName: String) {
         luma[0]?.let {
-            if (it.startsWith(s)) {
+            if (it.startsWith(name)) {
                 createFile()?.apply {
                     luma.let { it1 ->
                         it1[0]?.let { it2 ->
-                            it1[2]?.let { it3 ->
+                            it1[1]?.let { it3 ->
+                                Log.d("et_log", it2)
+                                Log.d("et_log", it3)
                                 DataInfo(
                                     SimpleDateFormat(
                                         "yyyy-MM-dd HH:mm:ss",
                                         Locale.CHINA
                                     ).format(System.currentTimeMillis()),
                                     this.absolutePath,
-                                    it2, listCategory[0], it3
+                                    it2, categoryName, it3
                                 ).apply {
                                     mainModel.putAnalHistory(this)
                                 }

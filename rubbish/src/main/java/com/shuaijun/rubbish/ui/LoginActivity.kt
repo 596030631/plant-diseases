@@ -64,6 +64,7 @@ class LoginActivity : AppCompatActivity() {
                     Intent(this, FullscreenActivity::class.java).apply {
                         startActivity(this)
                     }
+                    finish()
                 },{
 
                 })

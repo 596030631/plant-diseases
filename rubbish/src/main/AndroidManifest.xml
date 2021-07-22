@@ -22,7 +22,11 @@
             android:theme="@style/Theme.Plant.Fullscreen"
             android:screenOrientation="landscape"
             android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.FullscreenActivity"
@@ -31,11 +35,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.Plant.Fullscreen">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
         </activity>
     </application>

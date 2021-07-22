@@ -2,6 +2,7 @@ package com.shuaijun.rubbish.ui
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,11 @@ data class DataInfo(
     val name: String,
     val category: String,
     val bias: String
-)
+) {
+    override fun toString(): String {
+        return "DataInfo(time='$time', image='$image', name='$name', category='$category', bias='$bias')"
+    }
+}
 
 class HistoryFragment : Fragment() {
 
@@ -49,14 +54,15 @@ class HistoryFragment : Fragment() {
             Navigation.findNavController(it).popBackStack()
         }
 
-        binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 3).apply {
+        binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 2).apply {
             orientation = GridLayoutManager.HORIZONTAL
         }
         binding.recyclerview.adapter =
             Adapter(mainModel.mutableDataInfoList,
                 { v, p ->
-                    v.time.text = "时间：${mainModel.mutableDataInfoList[p].time}"
-                    v.name.text = "名称：${mainModel.mutableDataInfoList[p].name}"
+                    val time = "时间：" + mainModel.mutableDataInfoList[p].time
+                    v.time.text = time
+                    v.name.text = "名称：" + mainModel.mutableDataInfoList[p].name
                     v.category.text = "类别：${mainModel.mutableDataInfoList[p].category}"
                     v.bias.text = "置信：${mainModel.mutableDataInfoList[p].bias}"
                     v.image.setImageBitmap(BitmapFactory.decodeFile(mainModel.mutableDataInfoList[p].image))
