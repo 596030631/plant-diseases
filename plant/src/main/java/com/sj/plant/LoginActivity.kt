@@ -71,10 +71,11 @@ class LoginActivity : AppCompatActivity() {
             Single.timer(1500, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     Consumer {
+                        binding.btnSignIn.isEnabled = true
                         val passwdSaved = sharedPreferences.getString(inputUser.toString(), "")
                         loading.dismiss()
                         if (!TextUtils.equals(inputPasswd, passwdSaved)) {
-                            Toast.makeText(this, "账号错误", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "密码错误", Toast.LENGTH_SHORT).show()
                         } else {
                             Intent(this, MainActivity::class.java).apply {
                                 startActivity(this)

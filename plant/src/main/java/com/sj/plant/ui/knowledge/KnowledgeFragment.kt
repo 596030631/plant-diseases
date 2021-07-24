@@ -2,6 +2,8 @@ package com.sj.plant.ui.knowledge
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +53,7 @@ class KnowledgeFragment : Fragment() {
         }
 
         viewModel.analysisData.observe(viewLifecycleOwner) {
-            binding.editSearch.setText(it.result[1])
+            binding.editSearch.setText(it.label)
         }
 
         binding.root.setOnClickListener {
@@ -79,6 +81,25 @@ class KnowledgeFragment : Fragment() {
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext()).apply {
             orientation = LinearLayoutManager.VERTICAL
         }
+
+
+        binding.editSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    viewModel.searchByName(it.toString())
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+        })
     }
 
     override fun onResume() {

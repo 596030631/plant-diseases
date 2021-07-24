@@ -11,7 +11,13 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.pow
 
-data class AnalysisData(var select: Boolean, val category: Int, val result: Array<String>)
+data class AnalysisData(
+    var select: Boolean,
+    val category: Int,
+    val topIndex: String,
+    val label: String,
+    var prob: Double
+)
 
 class ImageDetectionFloat {
 
@@ -60,13 +66,9 @@ class ImageDetectionFloat {
                             AnalysisData(
                                 i == 0,
                                 pair.first,
-                                arrayOf(
-                                    "Top${i + 1}",
-                                    "${labels[pair.first]}",
-                                    "prob=${
-                                        Math.E.pow(pair.second.toDouble()) / sum
-                                    }"
-                                )
+                                "Top$i",
+                                "${labels[pair.first]}",
+                                Math.E.pow(pair.second.toDouble()) / sum
                             )
                         )
                     }

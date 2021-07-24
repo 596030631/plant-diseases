@@ -47,7 +47,7 @@ class ImageDetectionFloat {
                 if (key == mOutputLayer) {
                     val array = FloatArray(outputTensor.size)
                     outputTensor.read(array, 0, array.size)
-                    var sum: Double = 0.0
+                    var sum = 0.0
                     val topArray = topK(10, array)
                     for (pair in topArray) {
                         sum += Math.E.pow(pair.second.toDouble())

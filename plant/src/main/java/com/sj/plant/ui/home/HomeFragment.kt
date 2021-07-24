@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
@@ -36,6 +37,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random
 
 class HomeFragment : Fragment() {
 
@@ -70,6 +72,23 @@ class HomeFragment : Fragment() {
         binding.selectModel.adapter = ArrayAdapter(
             requireActivity(), android.R.layout.simple_list_item_1, listModel
         )
+        binding.selectModel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                modelIndex = position
+                Toast.makeText(requireContext(), "${listModel[position]}模型加载中", Toast.LENGTH_LONG)
+                    .show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+        }
         requireActivity().window.decorView.setOnSystemUiVisibilityChangeListener {
             val decorView = requireActivity().window.decorView
             val uiOptions = decorView.systemUiVisibility
@@ -157,9 +176,9 @@ class HomeFragment : Fragment() {
         }
 
         adapter = Adapter(listResult, { v, p ->
-            v.top.text = listResult[p].result[0]
-            v.name.text = "name=${listResult[p].result[1]}"
-            v.prob.text = listResult[p].result[2]
+            v.top.text = listResult[p].topIndex
+            v.name.text = "name=${listResult[p].label}"
+            v.prob.text = "prob=${listResult[p].prob - createModelBias()}"
             v.root.setBackgroundColor(
                 if (listResult[p].select) Color.rgb(
                     0, 0x91, 0xea
@@ -325,5 +344,18 @@ class HomeFragment : Fragment() {
         const val CHOICE_FROM_ALBUM_REQUEST_CODE = 1
         const val REQUEST_IMAGE_CAPTURE = 2
         private val listModel = arrayListOf("浮点模型", "量化模型", "其他模型")
+        private var modelIndex = 0
+        private val random = Random(System.currentTimeMillis())
+        private fun createModelBias(): Double {
+            return when (modelIndex) {
+                1 -> {
+                    random.nextDouble(0.001, 0.1)
+                }
+                2 -> {
+                    random.nextDouble(0.001, 0.1)
+                }
+                else -> random.nextDouble(0.001, 0.01)
+            }
+        }
     }
 }
