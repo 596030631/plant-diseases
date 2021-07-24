@@ -9,6 +9,7 @@ import com.qualcomm.qti.snpe.FloatTensor
 import com.qualcomm.qti.snpe.Tensor
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.pow
 
 class ImageDetectionFloat {
 
@@ -46,15 +47,19 @@ class ImageDetectionFloat {
                 if (key == mOutputLayer) {
                     val array = FloatArray(outputTensor.size)
                     outputTensor.read(array, 0, array.size)
-                    for (pair in topK(1, array)) {
-                        val result =
-                            arrayOf(
-                                labels[pair.first],
-                                "${pair.second}",
-                                String.format("%03d", mJavaExecuteTime / 3)
-                            )
-                        call(result)
+                    var sum: Double = 0.0
+                    val topArray = topK(10, array)
+                    for (pair in topArray) {
+                        sum += Math.E.pow(pair.second.toDouble())
                     }
+
+                    call(
+                        arrayOf(
+                            labels[topArray[0].first],
+                            "${Math.E.pow(topArray[0].second.toDouble()) / sum}",
+                            String.format("%03d", mJavaExecuteTime / 3)
+                        )
+                    )
                 }
             }
             releaseTensors(inputs, outputs)
