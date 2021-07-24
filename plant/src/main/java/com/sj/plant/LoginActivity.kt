@@ -4,11 +4,14 @@ import android.Manifest
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.sj.plant.databinding.ActivityLoginBinding
@@ -21,6 +24,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var loading: ProgressDialog
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,17 +35,52 @@ class LoginActivity : AppCompatActivity() {
                 setMessage("正在验证")
             }
         loading.window?.setGravity(Gravity.CENTER)
+        binding.btnRegisterIn.setOnClickListener {
+            val inputUser = binding.inputUser.text
+            val inputPasswd = binding.inputPasswd.text
+            if (TextUtils.isEmpty(inputUser)) {
+                Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(inputPasswd)) {
+                Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val notExist = TextUtils.isEmpty(sharedPreferences.getString(inputUser.toString(), ""))
+            if (notExist) {
+                sharedPreferences.edit().putString(inputUser.toString(), inputPasswd.toString())
+                    .apply()
+                Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "账号已存在", Toast.LENGTH_SHORT).show()
+            }
+        }
         binding.btnSignIn.setOnClickListener {
+            val inputUser = binding.inputUser.text
+            val inputPasswd = binding.inputPasswd.text
+            if (TextUtils.isEmpty(inputUser)) {
+                Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(inputPasswd)) {
+                Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             loading.show()
             binding.btnSignIn.isEnabled = false
             Single.timer(1500, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     Consumer {
+                        val passwdSaved = sharedPreferences.getString(inputUser.toString(), "")
                         loading.dismiss()
-                        Intent(this, MainActivity::class.java).apply {
-                            startActivity(this)
+                        if (!TextUtils.equals(inputPasswd, passwdSaved)) {
+                            Toast.makeText(this, "账号错误", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Intent(this, MainActivity::class.java).apply {
+                                startActivity(this)
+                            }
+                            finish()
                         }
-                        finish()
                     })
         }
 
@@ -51,11 +90,7 @@ class LoginActivity : AppCompatActivity() {
                 requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
+        sharedPreferences = getSharedPreferences("login_info", MODE_PRIVATE)
     }
 
     companion object {
