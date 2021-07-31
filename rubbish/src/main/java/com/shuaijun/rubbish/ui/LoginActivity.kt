@@ -66,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                     finish()
                 },{
-
+                    it.printStackTrace()
                 })
         }
 

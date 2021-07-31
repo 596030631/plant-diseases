@@ -43,7 +43,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /** Helper type alias used for analysis use case callbacks */
-typealias LumaListener = (luma: Array<String?>) -> Unit
+typealias LumaListener = (lama: Array<String?>) -> Unit
 
 class CameraFragment : Fragment() {
 
