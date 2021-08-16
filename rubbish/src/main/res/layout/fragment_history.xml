@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:layout_height="match_parent"
     tools:context=".ui.HistoryFragment"
@@ -17,13 +18,16 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/exit"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="退出" />
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/back"
+        app:backgroundTint="@color/white" />
 
     <TextView
         android:layout_width="match_parent"

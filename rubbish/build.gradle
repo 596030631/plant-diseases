@@ -19,7 +19,7 @@ android {
     buildToolsVersion "30.0.3"
     signingConfigs {
         sign {
-            storeFile file('F:\\Android\\EasyTouch.jks')
+            storeFile file('C:\\Users\\Administrator\\android\\plant\\EasyTouch.jks')
             keyAlias 'etkey'
             storePassword '86105970'
             keyPassword '86105970'
@@ -30,7 +30,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "1.1"
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.sign

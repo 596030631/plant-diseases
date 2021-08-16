@@ -56,7 +56,10 @@ class ImageDetectionFloat {
                     call(
                         arrayOf(
                             labels[topArray[0].first],
-                            "${Math.E.pow(topArray[0].second.toDouble()) / sum}",
+                            String.format(
+                                "%.3f",
+                                Math.E.pow(topArray[0].second.toDouble()) / sum
+                            ),
                             String.format("%03d", mJavaExecuteTime / 3)
                         )
                     )

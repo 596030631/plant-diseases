@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/inletsFragment">
+
+    <fragment
+        android:id="@+id/permissions_fragment"
+        android:name="com.shuaijun.plant.ui.PermissionsFragment"
+        android:label="PermissionsFragment" >
+
+        <action
+            android:id="@+id/action_permissions_fragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/camera_fragment"
+        android:name="com.shuaijun.plant.ui.BlankFragment"
+        android:label="CameraFragment" >
+
+        <action
+            android:id="@+id/action_camera_to_gallery"
+            app:destination="@id/gallery_fragment" />
+
+        <action
+            android:id="@+id/action_camera_to_permissions"
+            app:destination="@id/permissions_fragment"
+            app:popUpTo="@id/camera_fragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_camera_fragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/gallery_fragment"
+        android:name="com.shuaijun.plant.ui.GalleryFragment"
+        android:label="GalleryFragment" >
+        <argument
+            android:name="root_directory"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_gallery_fragment_to_reportFragment"
+            app:destination="@id/reportFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inletsFragment"
+        android:name="com.shuaijun.plant.ui.InletsFragment"
+        android:label="fragment_inlets"
+        tools:layout="@layout/fragment_inlets" >
+        <action
+            android:id="@+id/action_inletsFragment_to_permissions_fragment"
+            app:destination="@id/permissions_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reportFragment"
+        android:name="com.shuaijun.plant.ui.ReportFragment"
+        android:label="fragment_report"
+        tools:layout="@layout/fragment_report" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.shuaijun.plant.ui.HomeFragment"
+        android:label="home_fragment"
+        tools:layout="@layout/home_fragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_camera_fragment"
+            app:destination="@id/camera_fragment" />
+    </fragment>
+
+</navigation>

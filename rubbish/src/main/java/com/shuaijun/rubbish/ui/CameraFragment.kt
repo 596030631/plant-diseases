@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.Size
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -106,7 +107,7 @@ class CameraFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         Log.d("et_log", "onPause")
-
+        work = false;
     }
 
     override fun onDestroyView() {
@@ -213,6 +214,7 @@ class CameraFragment : Fragment() {
     private fun bindCameraUseCases() {
         val metrics = DisplayMetrics().also { binding.viewFinder.display.getRealMetrics(it) }
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
+        val photoAspectRatio = aspectRatio(640, 480)
         val cameraProvider = cameraProvider
             ?: throw IllegalStateException("Camera initialization failed.")
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
@@ -225,7 +227,8 @@ class CameraFragment : Fragment() {
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
             // We request aspect ratio but no resolution to match preview config, but letting
             // CameraX optimize for whatever specific resolution best fits our use cases
-            .setTargetAspectRatio(screenAspectRatio)
+//            .setTargetAspectRatio(photoAspectRatio)
+            .setTargetResolution(Size(640,480))
             // Set initial target rotation, we will have to call this again if rotation changes
             // during the lifecycle of this use case
             .setTargetRotation(rotation)

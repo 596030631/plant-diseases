@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_marginTop="12dp"
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:text="中国科学院发布我国首部东北黑土地白皮书"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+    <TextView
+        android:layout_marginStart="5dp"
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text="7月9日，中国科学院在黑龙江哈尔滨市发布《东北黑土地白皮书（2020）》，这是我国首次发布黑土地白皮书。中国科学院希望通过黑土地白皮书的发布，为“用好养好”黑土地提供科技支撑，同时能够让全社会对黑"
+        android:textColor="@color/black_less"
+        android:textSize="18sp" />
+
+</FrameLayout>
