@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.shuaijun.plant">
+    package="com.shuaijun.canvas">
     <!-- Enable instant app support -->
     <dist:module dist:instant="true" />
     <!-- Declare features -->
@@ -28,12 +28,12 @@
         android:supportsRtl="true">
 
         <service
-            android:name=".snpe.SnpeTaskService"
+            android:name="com.shuaijun.canvas.snpe.SnpeTaskService"
             android:enabled="true"
             android:process=":service"
             android:exported="true"/>
 
-        <activity android:name=".MainActivity"
+        <activity android:name="com.shuaijun.canvas.MainActivity"
             android:clearTaskOnLaunch="true"
             android:theme="@style/AppTheme"
             android:icon="@mipmap/ic_launcher"

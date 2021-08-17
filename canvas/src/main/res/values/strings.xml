@@ -1,30 +1,6 @@
 <resources>
     <string name="app_name">plant</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="title_home">识别</string>
+    <string name="title_dashboard">聊天室</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Tel</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome!"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-
-    <string name="capture_button_alt">Capture</string>
-    <string name="switch_camera_button_alt">Switch camera</string>
-    <string name="gallery_button_alt">Gallery</string>
-    <string name="back_button_alt">Back</string>
-    <string name="share_button_alt">Share</string>
-    <string name="share_hint">Share using</string>
-    <string name="capture_mode_camera">Camera</string>
-    <string name="capture_mode_hdr">HDR</string>
-    <string name="capture_mode_night">Night</string>
-    <string name="delete_button_alt">Delete</string>
-    <string name="delete_dialog">Delete current photo?</string>
-    <string name="delete_title">Confirm</string>
-
-    <string name="confirm">生成检测报告</string>
-
 </resources>

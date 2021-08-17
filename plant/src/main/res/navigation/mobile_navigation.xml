@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.sj.plant.ui.home.HomeFragment"
+        android:name="com.sj.canvas.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/navigation_knowledge"
-        android:name="com.sj.plant.ui.knowledge.KnowledgeFragment"
+        android:name="com.sj.canvas.ui.chat.KnowledgeFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_knowledge" >
         <action
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.sj.plant.ui.knowledge.DetailFragment"
+        android:name="com.sj.canvas.ui.chat.DetailFragment"
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" />
 

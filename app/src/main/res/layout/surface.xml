@@ -6,7 +6,7 @@
     tools:context=".ui.CameraFragment"
     tools:viewBindingIgnore="true">
 
-    <com.shuaijun.plant.camera.DrawView
+    <com.shuaijun.canvas.camera.DrawView
         android:id="@+id/drawView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

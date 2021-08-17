@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="com.shuaijun.plant.ui.PermissionsFragment"
+        android:name="com.shuaijun.canvas.ui.PermissionsFragment"
         android:label="PermissionsFragment" >
 
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.shuaijun.plant.ui.BlankFragment"
+        android:name="com.shuaijun.canvas.ui.BlankFragment"
         android:label="CameraFragment" >
 
         <action
@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/gallery_fragment"
-        android:name="com.shuaijun.plant.ui.GalleryFragment"
+        android:name="com.shuaijun.canvas.ui.GalleryFragment"
         android:label="GalleryFragment" >
         <argument
             android:name="root_directory"
@@ -50,7 +50,7 @@
     </fragment>
     <fragment
         android:id="@+id/inletsFragment"
-        android:name="com.shuaijun.plant.ui.InletsFragment"
+        android:name="com.shuaijun.canvas.ui.InletsFragment"
         android:label="fragment_inlets"
         tools:layout="@layout/fragment_inlets" >
         <action
@@ -59,12 +59,12 @@
     </fragment>
     <fragment
         android:id="@+id/reportFragment"
-        android:name="com.shuaijun.plant.ui.ReportFragment"
+        android:name="com.shuaijun.canvas.ui.ReportFragment"
         android:label="fragment_report"
         tools:layout="@layout/fragment_report" />
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.shuaijun.plant.ui.HomeFragment"
+        android:name="com.shuaijun.canvas.ui.HomeFragment"
         android:label="home_fragment"
         tools:layout="@layout/home_fragment" >
         <action
