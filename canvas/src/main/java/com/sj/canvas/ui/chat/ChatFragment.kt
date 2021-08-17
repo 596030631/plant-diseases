@@ -7,7 +7,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -59,11 +61,7 @@ class ChatFragment : Fragment() {
         binding.root.setOnClickListener {
             imm.hideSoftInputFromWindow(binding.editSearch.windowToken, 0)
         }
-        binding.btnSelect.setOnClickListener {
-            imm.hideSoftInputFromWindow(binding.editSearch.windowToken, 0)
-            viewModel.searchByName(binding.editSearch.editableText.toString())
-            adapter.notifyDataSetChanged()
-        }
+
         adapter = Adapter(listKnowledge, { v, p ->
             v.title.text = listKnowledge[p].title
             v.content.text = listKnowledge[p].detail
@@ -100,6 +98,13 @@ class ChatFragment : Fragment() {
             }
 
         })
+
+        binding.editSearch.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                binding.editSearch.setText("")
+            }
+            true
+        }
     }
 
     override fun onResume() {
