@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<sj.keyboard.XhsEmoticonsKeyBoard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ek_bar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
-    tools:context=".ui.chat.ChatFragment"
-    tools:viewBindingIgnore="false">
+    android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview"
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="80dp"
-        tools:listitem="@layout/item_knowledge" />
+        android:background="@color/grey"
+        tools:context=".ui.chat.ChatFragment"
+        tools:viewBindingIgnore="false">
 
-    <EditText
-        android:id="@+id/edit_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:imeOptions="actionSend"
-        android:layout_marginBottom="8dp"
-        android:inputType="text"
-        android:background="@drawable/shape_search_background"
-        android:textSize="22sp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="80dp"
+            tools:listitem="@layout/item_knowledge" />
 
+        <!--        <FrameLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="bottom"-->
+        <!--            android:layout_marginBottom="10dp"-->
+        <!--            android:background="@drawable/shape_search_background">-->
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <!--            <EditText-->
+        <!--                android:id="@+id/edit_search"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="bottom"-->
+        <!--                android:layout_marginStart="16dp"-->
+        <!--                android:layout_marginEnd="16dp"-->
+        <!--                android:layout_marginBottom="16dp"-->
+        <!--                android:imeOptions="actionSend"-->
+        <!--                android:inputType="text"-->
+        <!--                android:textSize="22sp" />-->
+        <!--        </FrameLayout>-->
+    </LinearLayout>
+</sj.keyboard.XhsEmoticonsKeyBoard>

@@ -1,6 +1,8 @@
 package com.sj.canvas
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -37,6 +39,33 @@ class MainActivity : AppCompatActivity() {
             }, {
                 Toast.makeText(this, "网络加载异常", Toast.LENGTH_SHORT).show()
             })
+
+
+
+//        window.decorView.also {
+//            it.viewTreeObserver.addOnGlobalLayoutListener {
+//                val rect = Rect()
+//                it.getWindowVisibleDisplayFrame(rect)
+//                val height: Int =
+//                    it.context.resources.displayMetrics.heightPixels
+//                val diff = height - rect.height()
+//                Log.d("tag_canvas", "height:$height")
+//                Log.d("tag_canvas", "rect:$rect")
+//                Log.d("tag_canvas", "diff:$diff")
+//
+//                if (diff > 0) {
+//                    if (binding.root.paddingBottom !== diff) {
+//                        // 将聊天记录定位到最后一行
+////                        binding.recyclerview.scrollToPosition(messageAdapter.getItemCount() - 1)
+//                        binding.root.setPadding(0, 0, 0, diff)
+//                    }
+//                } else {
+////                    if (contentView.getPaddingBottom() !== 0) {
+//                    binding.root.setPadding(0, 0, 0, 0)
+////                    }
+//                }
+//            }
+//        }
     }
 
     override fun onResume() {

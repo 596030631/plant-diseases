@@ -13,10 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -104,6 +101,18 @@ class HomeFragment : Fragment() {
     }
 
     private fun initEvent() {
+        val btnClear: Button = binding.clear
+        btnClear.setOnClickListener {
+            binding.paintView.clear()
+        }
+
+        binding.finish.setOnClickListener {
+            binding.paintView.creatBitmap().apply {
+                changeHomeImageLayout(false)
+                binding.image.setImageBitmap(this)
+            }
+        }
+
         if (viewModel.bitmap.value == null) viewModel.setNullImage(
             BitmapFactory.decodeResource(
                 resources,
@@ -114,6 +123,7 @@ class HomeFragment : Fragment() {
             binding.image.setImageBitmap(it)
         }
         binding.selectGallery.setOnClickListener {
+            changeHomeImageLayout(true)
             Intent(Intent.ACTION_GET_CONTENT).apply {
                 type = "image/*"
                 startActivityForResult(this, CHOICE_FROM_ALBUM_REQUEST_CODE)
@@ -126,7 +136,13 @@ class HomeFragment : Fragment() {
 //                    startActivityForResult(this, REQUEST_IMAGE_CAPTURE)
 //                }
 //            }
+            changeHomeImageLayout(false)
         }
+
+        binding.openCanvas.setOnClickListener {
+            changeHomeImageLayout(true)
+        }
+
         binding.btnAnalysis.setOnClickListener {
             if (ImageDetectionFloat.getInstance().available()) {
                 if (viewModel.bitmap.value == null) {
@@ -142,7 +158,7 @@ class HomeFragment : Fragment() {
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
-                            binding.btnAnalysis.text = "虫害识别"
+                            binding.btnAnalysis.text = "手绘识别"
                             binding.btnAnalysis.isEnabled = true
                             if (it.isNotEmpty()) {
                                 listResult.clear()
@@ -205,6 +221,25 @@ class HomeFragment : Fragment() {
                 DividerItemDecoration.VERTICAL
             )
         )
+    }
+
+    private fun changeHomeImageLayout(canvasShow: Boolean) {
+        if (canvasShow) {
+            if (binding.image.visibility != View.GONE) {
+                binding.image.visibility = View.GONE
+            }
+            if (binding.paintView.visibility != View.VISIBLE) {
+                binding.paintView.visibility = View.VISIBLE
+            }
+        } else {
+            if (binding.image.visibility != View.VISIBLE) {
+
+                binding.image.visibility = View.VISIBLE
+            }
+            if (binding.paintView.visibility != View.INVISIBLE) {
+                binding.paintView.visibility = View.INVISIBLE
+            }
+        }
     }
 
     private lateinit var currentPhotoPath: String
