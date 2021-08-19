@@ -2,11 +2,15 @@ package com.sj.canvas.ui.chat
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sj.canvas.R
 import com.sj.canvas.ai.AnalysisData
-import com.sj.canvas.ai.LoadModelTask
 
 class ChatViewModel : ViewModel() {
+
+    val listChat = mutableListOf<Content>()
+
+    init {
+        listChat.add(Content(text = "我是你爸爸"))
+    }
 
     fun search() {
 
@@ -17,16 +21,11 @@ class ChatViewModel : ViewModel() {
     }
 
     val analysisData: MutableLiveData<AnalysisData> = MutableLiveData()
-    val listKnowledge = mutableListOf<ContentData>()
-    var knowledgeSelect: ContentData? = null
+
+    data class Content(var left: Boolean = true, var text: String = "")
+
+
 
     companion object {
-        data class ContentData(
-            var category: Int,
-            var title: String,
-            internal var detail: String,
-            internal var contentText: String,
-            val image: Int
-        )
     }
 }

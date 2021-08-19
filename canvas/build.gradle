@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.3"
     signingConfigs {
         sign {
-            storeFile file('F:\\Android\\EasyTouch.jks')
+            storeFile file('C:\\Users\\Administrator\\android\\plant\\EasyTouch.jks')
             keyAlias 'etkey'
             storePassword '86105970'
             keyPassword '86105970'
@@ -81,4 +81,5 @@ dependencies {
     implementation 'com.github.w446108264:XhsEmoticonsKeyboard:2.0.3'
     implementation 'com.github.w446108264:AndroidEmoji:1.3-withsource'
 
+    implementation 'com.github.bigdongdong:ChatView:2.0' //添加依赖
 }

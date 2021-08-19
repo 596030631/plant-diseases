@@ -41,12 +41,7 @@ class DetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.knowledgeSelect?.let {
-            binding.content.text = it.contentText
-            binding.title.text = it.title
-            binding.image.setImageResource(it.image)
-//            binding..setText(it.category)
-        }
+
     }
 
     companion object {

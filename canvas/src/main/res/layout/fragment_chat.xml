@@ -1,45 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<sj.keyboard.XhsEmoticonsKeyBoard xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ek_bar"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/grey"
+    android:orientation="vertical"
+    tools:context=".ui.chat.ChatFragment"
+    tools:viewBindingIgnore="false">
 
-    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/grey"
-        tools:context=".ui.chat.ChatFragment"
-        tools:viewBindingIgnore="false">
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="1"
+        tools:listitem="@layout/item_chat" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="80dp"
-            tools:listitem="@layout/item_knowledge" />
 
-        <!--        <FrameLayout-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_gravity="bottom"-->
-        <!--            android:layout_marginBottom="10dp"-->
-        <!--            android:background="@drawable/shape_search_background">-->
+    <LinearLayout
+        android:id="@+id/activity_wechat_chat_layout_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/input_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <!--            <EditText-->
-        <!--                android:id="@+id/edit_search"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_gravity="bottom"-->
-        <!--                android:layout_marginStart="16dp"-->
-        <!--                android:layout_marginEnd="16dp"-->
-        <!--                android:layout_marginBottom="16dp"-->
-        <!--                android:imeOptions="actionSend"-->
-        <!--                android:inputType="text"-->
-        <!--                android:textSize="22sp" />-->
-        <!--        </FrameLayout>-->
+        <ImageView
+            android:id="@+id/activity_wechat_chat_iv_voice"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?selectableItemBackground"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_voice"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <EditText
+            android:id="@+id/activity_wechat_chat_et_msg"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/et_underline_style"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:textCursorDrawable="@null" />
+
+        <ImageView
+            android:id="@+id/activity_wechat_chat_iv_emoji"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_emoji" />
+
+        <ImageView
+            android:id="@+id/activity_wechat_chat_btn_send"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_add_w" />
     </LinearLayout>
-</sj.keyboard.XhsEmoticonsKeyBoard>
+
+</LinearLayout>
