@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_knowledge">
+    app:startDestination="@+id/navigation_home">
 
     <fragment
         android:id="@+id/navigation_home"
@@ -11,23 +11,15 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_navigation_home_to_navigation_dashboard"
-            app:destination="@id/navigation_knowledge" />
+            android:id="@+id/action_navigation_home_to_navigation_chat"
+            app:destination="@id/navigation_chat" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_knowledge"
+        android:id="@+id/navigation_chat"
         android:name="com.sj.canvas.ui.chat.ChatFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_chat" >
-        <action
-            android:id="@+id/action_navigation_knowledge_to_detailFragment"
-            app:destination="@id/detailFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/detailFragment"
-        android:name="com.sj.canvas.ui.chat.DetailFragment"
-        android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" />
 
 </navigation>

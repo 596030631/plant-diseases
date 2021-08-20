@@ -66,15 +66,16 @@ class ChatFragment : Fragment() {
 //            v.content.text = listKnowledge[p].detail
             content = viewModel.listChat[p]
             if (content.left) {
-                v.itemWechatMsgTvReceiverMsg.text = content.text
+                v.layoutReceive.visibility = View.VISIBLE
+                v.layoutSend.visibility = View.GONE
+                v.textReceive.text = content.text
             } else {
-                v.itemWechatMsgTvSenderMsg.text = content.text
+                v.layoutReceive.visibility = View.GONE
+                v.layoutSend.visibility = View.VISIBLE
+                v.textSender.text = content.text
             }
 
-            v.root.setOnClickListener {
-                Navigation.findNavController(it)
-                    .navigate(ChatFragmentDirections.actionNavigationKnowledgeToDetailFragment())
-            }
+
 
         }, { p ->
             ItemChatBinding.inflate(LayoutInflater.from(p.context), p, false)

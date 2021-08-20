@@ -3,30 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
     android:orientation="vertical"
     tools:context=".ui.chat.ChatFragment"
     tools:viewBindingIgnore="false">
+
+    <FrameLayout
+        android:background="#e2e3e4"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/icon_back" />
+
+        <TextView
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            android:textColor="@color/grey_deep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="智能机器人" />
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_weight="1"
+        android:background="@drawable/bg2"
+        android:overScrollMode="never"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
         tools:listitem="@layout/item_chat" />
 
 
     <LinearLayout
         android:id="@+id/activity_wechat_chat_layout_bottom"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="48dp"
         android:layout_gravity="bottom"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
         android:background="@drawable/input_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -46,9 +66,11 @@
             android:id="@+id/activity_wechat_chat_et_msg"
             android:layout_width="0dp"
             android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
             android:layout_weight="1"
-            android:background="@drawable/et_underline_style"
+            android:background="@null"
             android:imeOptions="actionSend"
             android:inputType="text"
             android:textCursorDrawable="@null" />

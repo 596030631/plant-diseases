@@ -27,9 +27,6 @@ class MainActivity : AppCompatActivity() {
         window.statusBarColor = resources.getColor(R.color.grey)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val navView: BottomNavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        navView.setupWithNavController(navController)
         Completable.create {
             LoadModelTask.getInstance().loadNetwork(application)
         }.subscribeOn(Schedulers.single())

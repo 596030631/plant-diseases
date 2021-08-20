@@ -4,19 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
     tools:context=".ui.home.HomeFragment"
     tools:viewBindingIgnore="false">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/label_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:text="手绘图像识别"
-        android:textColor="@color/black_less"
+        android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,17 +63,6 @@
             android:layout_gravity="end">
 
             <Button
-                android:id="@+id/select_gallery"
-                style="@style/TextAppearance.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="20dp"
-                android:padding="5dp"
-                android:text="图库选择"
-                android:textColor="@color/black_less" />
-
-            <Button
                 android:id="@+id/open_canvas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,7 +71,7 @@
                 android:layout_marginEnd="20dp"
                 android:padding="5dp"
                 android:text="画板手绘"
-                android:textColor="@color/black_less" />
+                android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/open_camera"
@@ -82,125 +81,88 @@
                 android:layout_marginEnd="20dp"
                 android:padding="5dp"
                 android:text="相机拍摄"
-                android:textColor="@color/black_less" />
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
 
     </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
+        android:id="@+id/layout_board"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="30dp"
-        app:cardCornerRadius="7dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@id/recyclerview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_button">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.unco.library.PainterView
-                android:id="@+id/paintView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#EAFAFA"
-                android:visibility="invisible" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/clear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="重绘" />
-
-                <Button
-                    android:id="@+id/finish"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="完成" />
-
-            </LinearLayout>
-        </FrameLayout>
-
-        <ImageView
-            android:id="@+id/image"
+        <com.unco.library.PainterView
+            android:id="@+id/paintView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerInside" />
+            android:background="#EAFAFA"
+            android:visibility="invisible" />
 
-    </androidx.cardview.widget.CardView>
+        <ImageView
+            android:id="@+id/clear"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="center"
+            android:layout_gravity="start"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/reset"
+            android:padding="8dp" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@id/recyclerview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_button" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/black_less"
-        app:layout_constraintBottom_toTopOf="@id/layout_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recyclerview" />
-
-    <LinearLayout
-        android:id="@+id/layout_bottom"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/btn_analysis"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
+        android:layout_gravity="end"
+        android:layout_marginStart="5dp"
+        android:padding="5dp"
+        android:text="点击识别"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/layout_board"
+        app:layout_constraintStart_toStartOf="@id/layout_board" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/robot"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/btn_analysis"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:padding="5dp"
-            android:text="手绘识别"
-            android:textColor="@color/black_less" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/btn_knowledge"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:padding="5dp"
-            android:text="查看结果"
-            android:textColor="@color/black_less" />
-
-    </LinearLayout>
+        app:lottie_rawRes="@raw/robot" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,70 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="8dp">
 
     <LinearLayout
-        android:id="@+id/item_wechat_msg_layout_receiver"
+        android:id="@+id/layout_receive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|start"
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/item_wechat_msg_iv_receiver_profile"
+            android:id="@+id/icon_receiver"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/icon_face_nomal" />
+            android:src="@drawable/icon_robot" />
 
-        <TextView
-            android:id="@+id/item_wechat_msg_tv_receiver_msg"
+        <com.cxd.chatview.moudle.ChatView xmlns:chat="http://schemas.android.com/apk/res-auto"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/receive_msg_bg"
-            android:gravity="center"
-            android:minHeight="45dp"
-            android:text="这是信息"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:minHeight="35dp"
+            android:paddingStart="10dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp"
+            chat:arrow_direction="start"
+            chat:arrow_height="12dp"
+            chat:arrow_up_distance="10dp"
+            chat:arrow_width="5dp"
+            chat:conner_radius="6dp"
+            chat:fill_color="#1296db"
+            chat:is_arrow_center="true"
+            chat:press_fill_color="#50111111"
+            chat:press_stroke_color="#50111111"
+            chat:stroke_color="#1296db"
+            chat:stroke_width="1px">
+
+            <TextView
+                android:id="@+id/text_receive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="箭头向右"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+        </com.cxd.chatview.moudle.ChatView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical|end"
+        android:orientation="horizontal">
+
+        <com.cxd.chatview.moudle.ChatView xmlns:chat="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:minHeight="35dp"
+            android:paddingStart="10dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp"
+            chat:arrow_direction="right"
+            chat:arrow_height="12dp"
+            chat:arrow_up_distance="10dp"
+            chat:arrow_width="5dp"
+            chat:conner_radius="6dp"
+            chat:fill_color="#1296db"
+            chat:is_arrow_center="true"
+            chat:press_fill_color="#50111111"
+            chat:press_stroke_color="#50111111"
+            chat:stroke_color="#1296db"
+            chat:stroke_width="1px">
+
+            <TextView
+                android:id="@+id/text_sender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="向右"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+        </com.cxd.chatview.moudle.ChatView>
+
+        <ImageView
+            android:id="@+id/icon_sender"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/icon_mine" />
 
     </LinearLayout>
 
 
-    <FrameLayout
-        android:id="@+id/item_wechat_msg_layout_sender"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/item_wechat_msg_tv_sender_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_gravity="end"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="32dp"
-            android:layout_toStartOf="@+id/item_wechat_msg_iv_sender_profile"
-            android:background="@drawable/send_msg_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:minHeight="45dp"
-            android:padding="8dp"
-            android:text="收到信息"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <ImageView
-            android:id="@+id/item_wechat_msg_iv_sender_profile"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="end|center_vertical"
-            android:src="@drawable/icon_emoji" />
-
-    </FrameLayout>
-
-</LinearLayout>
+</FrameLayout>

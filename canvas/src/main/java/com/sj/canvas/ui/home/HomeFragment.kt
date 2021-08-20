@@ -43,6 +43,8 @@ class HomeFragment : Fragment() {
         requireActivity().contentResolver
     }
 
+    private var srcType = 1
+
     private var photoFile: File? = null
 
     private val viewModel: HomeViewModel by lazy {
@@ -101,17 +103,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun initEvent() {
-        val btnClear: Button = binding.clear
-        btnClear.setOnClickListener {
+        binding.clear.setOnClickListener {
             binding.paintView.clear()
         }
 
-        binding.finish.setOnClickListener {
-            binding.paintView.creatBitmap().apply {
-                changeHomeImageLayout(false)
-                binding.image.setImageBitmap(this)
-            }
+        binding.robot.repeatCount = -1
+        binding.robot.playAnimation()
+
+        binding.robot.setOnClickListener {
+            Navigation.findNavController(it).navigate(R.id.action_navigation_home_to_navigation_chat)
         }
+
 
         if (viewModel.bitmap.value == null) viewModel.setNullImage(
             BitmapFactory.decodeResource(
@@ -122,14 +124,15 @@ class HomeFragment : Fragment() {
         viewModel.bitmap.observe(viewLifecycleOwner) {
             binding.image.setImageBitmap(it)
         }
-        binding.selectGallery.setOnClickListener {
-            changeHomeImageLayout(true)
-            Intent(Intent.ACTION_GET_CONTENT).apply {
-                type = "image/*"
-                startActivityForResult(this, CHOICE_FROM_ALBUM_REQUEST_CODE)
-            }
-        }
+//        binding.selectGallery.setOnClickListener {
+//            changeHomeImageLayout(true)
+//            Intent(Intent.ACTION_GET_CONTENT).apply {
+//                type = "image/*"
+//                startActivityForResult(this, CHOICE_FROM_ALBUM_REQUEST_CODE)
+//            }
+//        }
         binding.openCamera.setOnClickListener {
+            srcType = 2
             dispatchTakePictureIntent()
 //            Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
 //                resolveActivity(requireActivity().packageManager)?.also {
@@ -140,10 +143,19 @@ class HomeFragment : Fragment() {
         }
 
         binding.openCanvas.setOnClickListener {
+            srcType = 1
             changeHomeImageLayout(true)
         }
 
         binding.btnAnalysis.setOnClickListener {
+            if (srcType == 1) {
+                binding.paintView.creatBitmap().apply {
+                    changeHomeImageLayout(false)
+                    binding.image.setImageBitmap(this)
+                }
+                binding.paintView.clear()
+            }
+
             if (ImageDetectionFloat.getInstance().available()) {
                 if (viewModel.bitmap.value == null) {
                     Toast.makeText(requireContext(), "请先选择图片", Toast.LENGTH_SHORT).show()
@@ -172,21 +184,6 @@ class HomeFragment : Fragment() {
                             binding.btnAnalysis.isEnabled = true
                             Toast.makeText(requireContext(), "识别异常", Toast.LENGTH_SHORT).show()
                         })
-                }
-            }
-        }
-
-        binding.btnKnowledge.setOnClickListener { view ->
-            if (listResult.isEmpty()) {
-                Toast.makeText(requireContext(), "请识别后选择查看", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            listResult.forEach {
-                if (it.select) {
-                    knowledgeModel.analysisData.value = it
-                    Navigation.findNavController(view)
-                        .navigate(HomeFragmentDirections.actionNavigationHomeToNavigationDashboard())
-                    return@setOnClickListener
                 }
             }
         }
