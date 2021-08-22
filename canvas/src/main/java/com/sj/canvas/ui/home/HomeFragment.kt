@@ -1,6 +1,8 @@
 package com.sj.canvas.ui.home
 
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -18,15 +20,9 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.sj.canvas.R
-import com.sj.canvas.ai.AnalysisData
 import com.sj.canvas.ai.ImageDetectionFloat
 import com.sj.canvas.databinding.FragmentHomeBinding
-import com.sj.canvas.databinding.ItemHomeResultBinding
-import com.sj.canvas.ui.chat.ChatViewModel
-import com.sj.canvas.util.Adapter
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -35,6 +31,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
+
 
 class HomeFragment : Fragment() {
 
@@ -51,13 +48,6 @@ class HomeFragment : Fragment() {
         ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
     }
 
-    private val knowledgeModel: ChatViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(ChatViewModel::class.java)
-    }
-
-    private val listResult = mutableListOf<AnalysisData>()
-    private lateinit var adapter: Adapter<AnalysisData, ItemHomeResultBinding>
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,6 +61,9 @@ class HomeFragment : Fragment() {
         binding.selectModel.adapter = ArrayAdapter(
             requireActivity(), android.R.layout.simple_list_item_1, listModel
         )
+
+        binding.loading.setLoadingColor(R.color.bg)
+
         binding.selectModel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -84,7 +77,6 @@ class HomeFragment : Fragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
             }
 
         }
@@ -102,16 +94,30 @@ class HomeFragment : Fragment() {
         initEvent()
     }
 
+
     private fun initEvent() {
-        binding.clear.setOnClickListener {
+        binding.btnClear.setOnClickListener {
             binding.paintView.clear()
+        }
+
+        binding.btnSave.setOnClickListener {
+            if (srcType == 1) {
+                binding.paintView.creatBitmap().apply {
+                    changeHomeImageLayout(false)
+                    binding.image.setImageBitmap(this)
+                }
+                binding.paintView.clear()
+                binding.iconAirbnb.setImageDrawable(requireActivity().resources.getDrawable(R.drawable.airbnb_black))
+                binding.labelAnal.setTextColor(Color.BLACK)
+            }
         }
 
         binding.robot.repeatCount = -1
         binding.robot.playAnimation()
 
         binding.robot.setOnClickListener {
-            Navigation.findNavController(it).navigate(R.id.action_navigation_home_to_navigation_chat)
+            Navigation.findNavController(it)
+                .navigate(R.id.action_navigation_home_to_navigation_chat)
         }
 
 
@@ -124,22 +130,13 @@ class HomeFragment : Fragment() {
         viewModel.bitmap.observe(viewLifecycleOwner) {
             binding.image.setImageBitmap(it)
         }
-//        binding.selectGallery.setOnClickListener {
-//            changeHomeImageLayout(true)
-//            Intent(Intent.ACTION_GET_CONTENT).apply {
-//                type = "image/*"
-//                startActivityForResult(this, CHOICE_FROM_ALBUM_REQUEST_CODE)
-//            }
-//        }
+
         binding.openCamera.setOnClickListener {
             srcType = 2
             dispatchTakePictureIntent()
-//            Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-//                resolveActivity(requireActivity().packageManager)?.also {
-//                    startActivityForResult(this, REQUEST_IMAGE_CAPTURE)
-//                }
-//            }
             changeHomeImageLayout(false)
+            binding.iconAirbnb.setImageDrawable(requireActivity().resources.getDrawable(R.drawable.airbnb))
+            binding.labelAnal.setTextColor(Color.WHITE)
         }
 
         binding.openCanvas.setOnClickListener {
@@ -148,20 +145,14 @@ class HomeFragment : Fragment() {
         }
 
         binding.btnAnalysis.setOnClickListener {
-            if (srcType == 1) {
-                binding.paintView.creatBitmap().apply {
-                    changeHomeImageLayout(false)
-                    binding.image.setImageBitmap(this)
-                }
-                binding.paintView.clear()
-            }
 
             if (ImageDetectionFloat.getInstance().available()) {
                 if (viewModel.bitmap.value == null) {
                     Toast.makeText(requireContext(), "请先选择图片", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
-                binding.btnAnalysis.text = "正在识别"
+                binding.loading.visibility = View.VISIBLE
+                binding.loading.start()
                 binding.btnAnalysis.isEnabled = false
                 viewModel.bitmap.value?.let { it1 ->
                     Single.just(it1).map {
@@ -170,71 +161,38 @@ class HomeFragment : Fragment() {
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
-                            binding.btnAnalysis.text = "手绘识别"
+                            binding.loading.visibility = View.GONE
+                            binding.loading.stop()
                             binding.btnAnalysis.isEnabled = true
                             if (it.isNotEmpty()) {
-                                listResult.clear()
-                                it.forEach { top ->
-                                    listResult.add(top)
-                                }
-                                adapter.notifyDataSetChanged()
+                                showResult(it)
                             }
                         }, {
-                            binding.btnAnalysis.text = "虫害识别"
+                            it.printStackTrace()
+                            binding.loading.visibility = View.GONE
+                            binding.loading.stop()
                             binding.btnAnalysis.isEnabled = true
                             Toast.makeText(requireContext(), "识别异常", Toast.LENGTH_SHORT).show()
                         })
                 }
             }
         }
-
-        adapter = Adapter(listResult, { v, p ->
-            v.top.text = listResult[p].topIndex
-            v.name.text = "name=${listResult[p].label}"
-            v.prob.text = "prob=${listResult[p].prob - createModelBias()}"
-            v.root.setBackgroundColor(
-                if (listResult[p].select) Color.rgb(
-                    0, 0x91, 0xea
-                ) else Color.rgb(
-                    0xe2,
-                    0xe3,
-                    0xe4
-                )
-            )
-            v.root.setOnClickListener {
-                for ((i, anal) in listResult.withIndex()) {
-                    anal.select = i == p
-                }
-                adapter.notifyDataSetChanged()
-            }
-        }, { p -> ItemHomeResultBinding.inflate(LayoutInflater.from(p.context), p, false) })
-        binding.recyclerview.adapter = adapter
-        binding.recyclerview.layoutManager = LinearLayoutManager(requireContext()).also {
-            it.orientation = LinearLayoutManager.VERTICAL
-        }
-        binding.recyclerview.addItemDecoration(
-            DividerItemDecoration(
-                requireContext(),
-                DividerItemDecoration.VERTICAL
-            )
-        )
     }
 
     private fun changeHomeImageLayout(canvasShow: Boolean) {
         if (canvasShow) {
-            if (binding.image.visibility != View.GONE) {
-                binding.image.visibility = View.GONE
+            if (binding.image.visibility != View.INVISIBLE) {
+                binding.image.visibility = View.INVISIBLE
             }
-            if (binding.paintView.visibility != View.VISIBLE) {
-                binding.paintView.visibility = View.VISIBLE
+            if (binding.layoutBoard.visibility != View.VISIBLE) {
+                binding.layoutBoard.visibility = View.VISIBLE
             }
         } else {
             if (binding.image.visibility != View.VISIBLE) {
-
                 binding.image.visibility = View.VISIBLE
             }
-            if (binding.paintView.visibility != View.INVISIBLE) {
-                binding.paintView.visibility = View.INVISIBLE
+            if (binding.layoutBoard.visibility != View.INVISIBLE) {
+                binding.layoutBoard.visibility = View.INVISIBLE
             }
         }
     }
@@ -370,6 +328,18 @@ class HomeFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "操作失败", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showResult(list: Array<String?>) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("识别结果")
+            .setItems(list, { dialog, which ->
+
+            })
+            .setNegativeButton("确定", DialogInterface.OnClickListener { dialog, which -> })
+            .setPositiveButton("取消", DialogInterface.OnClickListener { dialog, which -> })
+            .setCancelable(true)
+            .create().show()
     }
 
     companion object {

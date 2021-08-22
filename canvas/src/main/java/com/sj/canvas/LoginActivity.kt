@@ -1,6 +1,7 @@
 package com.sj.canvas
 
 import android.Manifest
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,8 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -29,6 +32,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(LayoutInflater.from(this))
+        setStatusBarColor(this)
+
         setContentView(binding.root)
         loading = ProgressDialog(this)
             .apply {
@@ -92,6 +97,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         sharedPreferences = getSharedPreferences("login_info", MODE_PRIVATE)
+    }
+
+    private fun setStatusBarColor(activity: Activity) {
+        val window: Window = activity.window
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(R.color.bg)
     }
 
     companion object {

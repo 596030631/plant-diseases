@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
+    android:background="@color/bg"
     tools:context=".ui.chat.ChatFragment"
     tools:viewBindingIgnore="false">
 
 
     <FrameLayout
-        android:background="#e2e3e4"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize">
 
@@ -17,40 +18,45 @@
             android:id="@+id/btn_back"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:padding="16dp"
             android:layout_gravity="center_vertical"
+            android:padding="16dp"
             android:src="@drawable/icon_back" />
 
         <TextView
-            android:layout_gravity="center"
-            android:textSize="18sp"
-            android:textColor="@color/grey_deep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="智能机器人" />
+            android:layout_gravity="center"
+            android:text="手绘互动"
+            android:textColor="#FBE9E7"
+            android:textSize="18sp" />
     </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#31F8F8F8" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/bg2"
         android:overScrollMode="never"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
-        android:fitsSystemWindows="true"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         tools:listitem="@layout/item_chat" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#31F8F8F8" />
 
     <LinearLayout
         android:id="@+id/layout_input"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
-        android:background="@drawable/input_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 

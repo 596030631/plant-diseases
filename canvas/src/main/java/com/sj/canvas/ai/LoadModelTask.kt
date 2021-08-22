@@ -14,7 +14,7 @@ class LoadModelTask {
 
     fun loadNetwork(ctx: Application) {
 
-            val labelInput = ctx.assets.open("a/labels2.txt")
+            val labelInput = ctx.assets.open("labels.txt")
             labelInput.bufferedReader().useLines { label ->
                 label.forEach { line ->
                     Log.d("et_log", line)
@@ -22,7 +22,7 @@ class LoadModelTask {
                 }
             }
             labelInput.close()
-            val modelInput = ctx.assets.open("effect.dlc")
+            val modelInput = ctx.assets.open("canvas.dlc")
             val builder = NeuralNetworkBuilder(ctx)
                 .setDebugEnabled(false)
                 .setRuntimeOrder(NeuralNetwork.Runtime.CPU)

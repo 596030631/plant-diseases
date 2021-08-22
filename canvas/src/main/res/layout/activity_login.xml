@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_bg"
+    android:background="@color/bg"
     tools:context=".LoginActivity"
     tools:viewBindingIgnore="false">
 
@@ -20,13 +20,14 @@
         <ImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/plant" />
+            android:src="@drawable/icon_logo_128" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:text="虫害助手"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:text="手绘识别"
             android:textColor="@color/white"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -58,8 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:text="Plant Helper"
-                android:textColor="@color/green_teal"
+                android:text="Hand Drawn"
+                android:textColor="@color/bg"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -69,7 +70,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/grey" />
+                android:background="@color/bg" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -87,12 +88,11 @@
                         android:id="@+id/input_user"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:hint="username"
+                        android:hint="user"
                         android:inputType="phone"
                         android:maxLength="11"
-                        android:textColor="@color/green_teal"
-                        android:textColorHint="@color/green_teal"
+                        android:textColor="@color/bg"
+                        android:textColorHint="@color/bg"
                         android:textSize="20sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -118,8 +118,8 @@
                         android:hint="password"
                         android:inputType="textPassword"
                         android:maxLength="11"
-                        android:textColor="@color/green_teal"
-                        android:textColorHint="@color/green_teal"
+                        android:textColor="@color/bg"
+                        android:textColorHint="@color/bg"
                         android:textSize="20sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>

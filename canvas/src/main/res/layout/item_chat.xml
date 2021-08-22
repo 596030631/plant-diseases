@@ -19,39 +19,53 @@
             android:layout_height="32dp"
             android:src="@drawable/icon_robot" />
 
-        <com.cxd.chatview.moudle.ChatView xmlns:chat="http://schemas.android.com/apk/res-auto"
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:minHeight="35dp"
-            android:paddingStart="10dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="15dp"
-            android:paddingBottom="10dp"
-            chat:arrow_direction="start"
-            chat:arrow_height="12dp"
-            chat:arrow_up_distance="10dp"
-            chat:arrow_width="5dp"
-            chat:conner_radius="6dp"
-            chat:fill_color="#1296db"
-            chat:is_arrow_center="true"
-            chat:press_fill_color="#50111111"
-            chat:press_stroke_color="#50111111"
-            chat:stroke_color="#1296db"
-            chat:stroke_width="1px">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/text_receive"
+            <com.cxd.chatview.moudle.ChatView xmlns:chat="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/layout_text_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="箭头向右"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp" />
-        </com.cxd.chatview.moudle.ChatView>
+                android:layout_gravity="start"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:minHeight="35dp"
+                android:paddingStart="10dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp"
+                chat:arrow_direction="start"
+                chat:arrow_height="12dp"
+                chat:arrow_up_distance="10dp"
+                chat:arrow_width="5dp"
+                chat:conner_radius="6dp"
+                chat:fill_color="#1296db"
+                chat:is_arrow_center="true"
+                chat:press_fill_color="#50111111"
+                chat:press_stroke_color="#50111111"
+                chat:stroke_color="#1296db"
+                chat:stroke_width="1px">
+
+                <TextView
+                    android:id="@+id/text_receive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="箭头向右"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+            </com.cxd.chatview.moudle.ChatView>
+
+            <ImageView
+                android:id="@+id/image_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:scaleType="centerInside" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -62,39 +76,52 @@
         android:gravity="center_vertical|end"
         android:orientation="horizontal">
 
-        <com.cxd.chatview.moudle.ChatView xmlns:chat="http://schemas.android.com/apk/res-auto"
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:minHeight="35dp"
-            android:paddingStart="10dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="15dp"
-            android:paddingBottom="10dp"
-            chat:arrow_direction="right"
-            chat:arrow_height="12dp"
-            chat:arrow_up_distance="10dp"
-            chat:arrow_width="5dp"
-            chat:conner_radius="6dp"
-            chat:fill_color="#1296db"
-            chat:is_arrow_center="true"
-            chat:press_fill_color="#50111111"
-            chat:press_stroke_color="#50111111"
-            chat:stroke_color="#1296db"
-            chat:stroke_width="1px">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/text_sender"
+            <com.cxd.chatview.moudle.ChatView xmlns:chat="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/layout_text_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="向右"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp" />
-        </com.cxd.chatview.moudle.ChatView>
+                android:layout_gravity="start"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:minHeight="35dp"
+                android:paddingStart="10dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp"
+                chat:arrow_direction="right"
+                chat:arrow_height="12dp"
+                chat:arrow_up_distance="10dp"
+                chat:arrow_width="5dp"
+                chat:conner_radius="6dp"
+                chat:fill_color="#1296db"
+                chat:is_arrow_center="true"
+                chat:press_fill_color="#50111111"
+                chat:press_stroke_color="#50111111"
+                chat:stroke_color="#1296db"
+                chat:stroke_width="1px">
+
+                <TextView
+                    android:id="@+id/text_sender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="向右"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+            </com.cxd.chatview.moudle.ChatView>
+
+            <ImageView
+                android:id="@+id/image_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scaleType="centerInside" />
+        </FrameLayout>
 
         <ImageView
             android:id="@+id/icon_sender"
@@ -102,8 +129,5 @@
             android:layout_height="32dp"
             android:layout_marginStart="8dp"
             android:src="@drawable/icon_mine" />
-
     </LinearLayout>
-
-
 </FrameLayout>

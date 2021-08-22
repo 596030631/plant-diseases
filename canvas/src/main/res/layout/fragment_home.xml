@@ -4,89 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg"
     tools:context=".ui.home.HomeFragment"
     tools:viewBindingIgnore="false">
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/bg1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/label_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
-        android:text="手绘图像识别"
+        android:text="首页"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_title" />
-
-    <FrameLayout
-        android:id="@+id/layout_button"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_title">
+        app:layout_constraintTop_toTopOf="parent">
 
         <Spinner
             android:id="@+id/select_model"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:textColor="@color/black_less" />
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end">
+        <ImageView
+            android:id="@+id/open_canvas"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="16dp"
+            android:src="@drawable/icon_canvas"
+            android:textColor="@color/white" />
 
-            <Button
-                android:id="@+id/open_canvas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:padding="5dp"
-                android:text="画板手绘"
-                android:textColor="@color/white" />
+        <ImageView
+            android:id="@+id/open_camera"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="16dp"
+            android:src="@drawable/icon_camera"
+            android:textColor="@color/white" />
 
-            <Button
-                android:id="@+id/open_camera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="20dp"
-                android:padding="5dp"
-                android:text="相机拍摄"
-                android:textColor="@color/white" />
+    </LinearLayout>
 
-        </LinearLayout>
+    <View
+        android:id="@+id/line1"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:background="#31F8F8F8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_title" />
 
-
-    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/layout_board"
@@ -95,27 +69,33 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@id/recyclerview"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_button">
+        app:layout_constraintTop_toBottomOf="@id/line1">
 
         <com.unco.library.PainterView
             android:id="@+id/paintView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#EAFAFA"
-            android:visibility="invisible" />
+            android:background="@drawable/shape_search_background" />
 
         <ImageView
-            android:id="@+id/clear"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="center"
-            android:layout_gravity="start"
+            android:id="@+id/btn_clear"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_marginStart="8dp"
-            android:background="@drawable/reset"
-            android:padding="8dp" />
+            android:padding="16dp"
+            android:src="@drawable/icon_clear_black" />
+
+        <ImageView
+            android:id="@+id/btn_save"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="64dp"
+            android:padding="14dp"
+            android:src="@drawable/icon_save_black" />
 
     </FrameLayout>
 
@@ -126,36 +106,51 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:scaleType="centerInside"
-        app:layout_constraintBottom_toTopOf="@id/recyclerview"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_button" />
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:textColor="@color/black_less"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line1" />
 
-    <Button
-        android:id="@+id/btn_analysis"
+    <com.victor.loading.newton.NewtonCradleLoading
+        android:id="@+id/loading"
         android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.65" />
+
+
+    <LinearLayout
+        android:id="@+id/btn_analysis"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginStart="5dp"
-        android:padding="5dp"
-        android:text="点击识别"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/layout_board"
-        app:layout_constraintStart_toStartOf="@id/layout_board" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/icon_airbnb"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="16dp"
+            android:src="@drawable/airbnb" />
+
+        <TextView
+            android:id="@+id/label_anal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="识别"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/robot"

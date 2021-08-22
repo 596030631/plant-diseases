@@ -11,20 +11,12 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.pow
 
-data class AnalysisData(
-    var select: Boolean,
-    val category: Int,
-    val topIndex: String,
-    val label: String,
-    var prob: Double
-)
-
 class ImageDetectionFloat {
 
     fun available() = !detectLock.get()
 
-    fun detection(image: Bitmap): MutableList<AnalysisData> {
-        val result = mutableListOf<AnalysisData>()
+    fun detection(image: Bitmap): Array<String?> {
+        val result = arrayOfNulls<String>(3)
         synchronized(detectLock) {
             if (!available()) return result
             detectLock.set(true)
@@ -62,15 +54,13 @@ class ImageDetectionFloat {
                         sum += Math.E.pow(pair.second.toDouble())
                     }
                     for ((i, pair) in topArray.withIndex()) {
-                        result.add(
-                            AnalysisData(
-                                i == 0,
-                                pair.first,
-                                "Top$i",
-                                "${labels[pair.first]}",
-                                Math.E.pow(pair.second.toDouble()) / sum
-                            )
-                        )
+                        result[i] =
+                            "TOP${i + 1}: ${labels[pair.first]}  ${
+                                String.format(
+                                    "%.4f",
+                                    Math.E.pow(pair.second.toDouble()) / sum
+                                )
+                            }"
                     }
                 }
             }

@@ -1,7 +1,9 @@
 package com.sj.canvas
 
+import android.app.Activity
+import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,31 +19,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        window.statusBarColor = resources.getColor(R.color.grey)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setStatusBarColor(this)
+
         setContentView(binding.root)
+
+
+
         Completable.create {
             LoadModelTask.getInstance().loadNetwork(application)
         }.subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Toast.makeText(this, "网络加载完成", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "模型加载完成", Toast.LENGTH_SHORT).show()
             }, {
-                Toast.makeText(this, "网络加载异常", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "模型加载异常", Toast.LENGTH_SHORT).show()
             })
     }
 
-    override fun onResume() {
-        super.onResume()
-        val decorView = window.decorView
-        val uiOptions = decorView.systemUiVisibility
-        var newUiOptions = uiOptions
-        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_IMMERSIVE
-        newUiOptions = newUiOptions or View.SYSTEM_UI_FLAG_FULLSCREEN
-        decorView.systemUiVisibility = newUiOptions
+    private fun setStatusBarColor(activity: Activity) {
+        val window: Window = activity.window
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(R.color.bg)
     }
-
 }
