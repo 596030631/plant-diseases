@@ -14,7 +14,7 @@ class LoadModelTask {
 
     fun loadNetwork(ctx: Application) {
 
-            val labelInput = ctx.assets.open("labels2.txt")
+            val labelInput = ctx.assets.open("a/labels2.txt")
             labelInput.bufferedReader().useLines { label ->
                 label.forEach { line ->
                     Log.d("et_log", line)

@@ -1,12 +1,15 @@
 package com.sj.canvas.ui.chat
 
 import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -26,6 +29,8 @@ class ChatFragment : Fragment() {
     private val imm: InputMethodManager by lazy {
         requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     }
+
+    private var marginSetting = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,10 +53,35 @@ class ChatFragment : Fragment() {
             decorView.systemUiVisibility = newUiOptions
         }
 
+        binding.btnBack.setOnClickListener {
+            Navigation.findNavController(it).popBackStack()
+        }
+
+        binding.inputMessage.setOnClickListener {
+            showKeyBoard(true)
+        }
+
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            //获取当前界面可视部分
+            requireActivity().window.decorView.getWindowVisibleDisplayFrame(r)
+            //获取屏幕的高度
+            val screenHeight: Int =
+                requireActivity().window.decorView.rootView.height
+            //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候 此高度为0 键盘弹出的时候为一个正数
+            val heightDifference: Int = screenHeight - r.bottom
+            Log.d("TAG", "Size: $heightDifference")
+            if (heightDifference < 20) {
+                showKeyBoard(false)
+            } else {
+                showKeyBoard(true)
+            }
+        }
+
 //        viewModel.analysisData.observe(viewLifecycleOwner) {
 //            binding.editSearch.setText(it.label)
 //        }
-//
+
 //        binding.root.setOnClickListener {
 //            imm.hideSoftInputFromWindow(binding.editSearch.windowToken, 0)
 //        }
@@ -76,7 +106,6 @@ class ChatFragment : Fragment() {
             }
 
 
-
         }, { p ->
             ItemChatBinding.inflate(LayoutInflater.from(p.context), p, false)
         })
@@ -85,43 +114,47 @@ class ChatFragment : Fragment() {
             orientation = LinearLayoutManager.VERTICAL
         }
 
-
-//        binding.editSearch.addTextChangedListener(object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//
-//            }
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                s?.let {
-//                    viewModel.searchByName(it.toString())
-//                    adapter.notifyDataSetChanged()
-//                }
-//            }
-//
-//        })
-//
-        binding.activityWechatChatEtMsg.setOnEditorActionListener { v, actionId, event ->
+        binding.inputMessage.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 viewModel.listChat.add(
                     ChatViewModel.Content(
                         false,
-                        binding.activityWechatChatEtMsg.text.toString()
+                        binding.inputMessage.text.toString()
                     )
                 )
                 adapter.notifyItemInserted(viewModel.listChat.size - 1)
-                binding.activityWechatChatEtMsg.setText("")
+                binding.inputMessage.setText("")
+//                binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
             }
             true
         }
 
     }
 
+
     override fun onResume() {
         super.onResume()
         viewModel.search()
+    }
+
+    private fun showKeyBoard(boolean: Boolean) {
+        if (marginSetting == boolean) return
+        if (boolean) {
+            marginSetting = true
+            binding.layoutInput.postDelayed({
+                val param: LinearLayout.LayoutParams =
+                    binding.layoutInput.layoutParams as LinearLayout.LayoutParams
+                param.bottomMargin = 16
+                binding.layoutInput.layoutParams = param
+            }, 100)
+        } else {
+            marginSetting = false
+            binding.layoutInput.post {
+                val param: LinearLayout.LayoutParams =
+                    binding.layoutInput.layoutParams as LinearLayout.LayoutParams
+                param.bottomMargin = 0
+                binding.layoutInput.layoutParams = param
+            }
+        }
     }
 }

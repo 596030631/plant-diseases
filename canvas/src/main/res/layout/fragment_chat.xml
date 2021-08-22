@@ -7,15 +7,17 @@
     tools:context=".ui.chat.ChatFragment"
     tools:viewBindingIgnore="false">
 
+
     <FrameLayout
         android:background="#e2e3e4"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize">
 
         <ImageView
+            android:id="@+id/btn_back"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:padding="12dp"
+            android:padding="16dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/icon_back" />
 
@@ -39,11 +41,12 @@
         android:paddingTop="16dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
+        android:fitsSystemWindows="true"
         tools:listitem="@layout/item_chat" />
 
 
     <LinearLayout
-        android:id="@+id/activity_wechat_chat_layout_bottom"
+        android:id="@+id/layout_input"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
@@ -52,7 +55,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/activity_wechat_chat_iv_voice"
+            android:id="@+id/btn_voice"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?selectableItemBackground"
@@ -63,12 +66,11 @@
             tools:layout_editor_absoluteY="0dp" />
 
         <EditText
-            android:id="@+id/activity_wechat_chat_et_msg"
+            android:id="@+id/input_message"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
             android:layout_weight="1"
             android:background="@null"
             android:imeOptions="actionSend"
@@ -76,7 +78,7 @@
             android:textCursorDrawable="@null" />
 
         <ImageView
-            android:id="@+id/activity_wechat_chat_iv_emoji"
+            android:id="@+id/btn_emo"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="8dp"
@@ -84,7 +86,7 @@
             android:src="@drawable/icon_emoji" />
 
         <ImageView
-            android:id="@+id/activity_wechat_chat_btn_send"
+            android:id="@+id/btn_add"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
