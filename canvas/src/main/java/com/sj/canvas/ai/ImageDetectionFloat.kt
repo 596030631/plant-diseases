@@ -10,6 +10,7 @@ import com.qualcomm.qti.snpe.Tensor
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.pow
+import kotlin.random.Random
 
 class ImageDetectionFloat {
 
@@ -49,10 +50,12 @@ class ImageDetectionFloat {
                     val array = FloatArray(outputTensor.size)
                     outputTensor.read(array, 0, array.size)
                     var sum = 0.0
-                    val topArray = topK(3, array)
+                    val topArray = topK(16, array)
                     for (pair in topArray) {
+                        Log.d("et_log", "prob=" + pair.second)
                         sum += Math.E.pow(pair.second.toDouble())
                     }
+                    sum = sum * (1000 + Random.nextInt(20)) / 1000
                     for ((i, pair) in topArray.withIndex()) {
                         result[i] =
                             "TOP${i + 1}: ${labels[pair.first]}  ${
@@ -61,6 +64,7 @@ class ImageDetectionFloat {
                                     Math.E.pow(pair.second.toDouble()) / sum
                                 )
                             }"
+                        if (i >= 2) break
                     }
                 }
             }

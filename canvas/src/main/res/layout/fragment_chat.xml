@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:background="@color/bg"
     tools:context=".ui.chat.ChatFragment"
     tools:viewBindingIgnore="false">
 
@@ -55,10 +55,13 @@
     <LinearLayout
         android:id="@+id/layout_input"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="56dp"
         android:layout_gravity="bottom"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp">
 
         <ImageView
             android:id="@+id/btn_voice"

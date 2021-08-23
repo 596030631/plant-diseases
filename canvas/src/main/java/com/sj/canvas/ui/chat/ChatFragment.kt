@@ -51,23 +51,21 @@ class ChatFragment : Fragment() {
         adapter = Adapter(viewModel.listChat, { v, p ->
             content = viewModel.listChat[p]
             if (content.left) {
-                v.layoutSend.visibility = View.GONE
+                v.layoutRight.visibility = View.GONE
+                v.layoutLeft.visibility = View.VISIBLE
                 if (content.image != null) {
                     v.imageLeft.setImageDrawable(content.image)
                     v.layoutTextLeft.visibility = View.GONE
+                    v.imageLeft.visibility = View.VISIBLE
                 } else {
-                    v.textReceive.text = content.text
+                    v.textLeft.text = content.text
                     v.imageLeft.visibility = View.GONE
+                    v.layoutTextLeft.visibility = View.VISIBLE
                 }
             } else {
-                v.layoutReceive.visibility = View.GONE
-                if (content.image != null) {
-                    v.imageRight.setImageDrawable(content.image)
-                    v.layoutTextRight.visibility = View.GONE
-                } else {
-                    v.textSender.text = content.text
-                    v.imageRight.visibility = View.GONE
-                }
+                v.layoutLeft.visibility = View.GONE
+                v.layoutRight.visibility = View.VISIBLE
+                v.textRight.text = content.text
             }
         }, { p ->
             ItemChatBinding.inflate(LayoutInflater.from(p.context), p, false)

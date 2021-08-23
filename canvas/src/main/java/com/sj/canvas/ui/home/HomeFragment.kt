@@ -7,6 +7,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -247,13 +249,37 @@ class HomeFragment : Fragment() {
                 photoFile?.let { it ->
                     Single.just(it)
                         .map {
-                            val bitmap = BitmapFactory.decodeFile(it.absolutePath)
-                            Bitmap.createScaledBitmap(
-                                bitmap,
-                                binding.image.width,
-                                binding.image.height,
-                                true
+                            var degree = 0
+                            val exifInterface = ExifInterface(it.absolutePath)
+                            val orientation = exifInterface.getAttributeInt(
+                                ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_NORMAL
                             )
+                            when (orientation) {
+                                ExifInterface.ORIENTATION_ROTATE_90 -> degree = 90
+                                ExifInterface.ORIENTATION_ROTATE_180 -> degree = 180
+                                ExifInterface.ORIENTATION_ROTATE_270 -> degree = 270
+                            }
+
+                            val bitmap = BitmapFactory.decodeFile(it.absolutePath)
+                            val matrix = Matrix()
+                            matrix.postRotate(degree.toFloat())
+                            Log.e("et_log", "degree:$degree")
+                            Bitmap.createBitmap(
+                                bitmap,
+                                0, 0,
+                                bitmap.width,
+                                bitmap.height,
+                                matrix,
+                                true
+                            ).apply {
+                                return@map Bitmap.createScaledBitmap(
+                                    this,
+                                    binding.image.width,
+                                    binding.image.height,
+                                    true
+                                )
+                            }
                         }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
