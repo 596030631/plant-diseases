@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -17,6 +18,7 @@
             android:id="@+id/icon_left"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:layout_gravity="start|top"
             android:src="@drawable/icon_robot" />
 
         <FrameLayout
@@ -58,13 +60,31 @@
                     android:textSize="16sp" />
             </com.cxd.chatview.moudle.ChatView>
 
-            <ImageView
-                android:id="@+id/image_left"
+            <FrameLayout
+                android:id="@+id/layout_image_left"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:scaleType="centerInside" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/image_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="64dp"
+                    android:scaleType="centerInside" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/btn_analysis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center_vertical|end"
+                    app:lottie_autoPlay="true"
+                    app:lottie_rawRes="@raw/play" />
+
+            </FrameLayout>
+
+
         </FrameLayout>
     </LinearLayout>
 
@@ -115,12 +135,12 @@
                     android:textSize="16sp" />
             </com.cxd.chatview.moudle.ChatView>
 
-<!--            <ImageView-->
-<!--                android:id="@+id/image_right"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="16dp"-->
-<!--                android:scaleType="centerInside" />-->
+            <!--            <ImageView-->
+            <!--                android:id="@+id/image_right"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="16dp"-->
+            <!--                android:scaleType="centerInside" />-->
         </FrameLayout>
 
         <ImageView

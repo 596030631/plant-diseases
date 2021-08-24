@@ -1,6 +1,7 @@
 package com.sj.canvas.ui.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sj.canvas.ai.LoadModelTask
 import com.sj.canvas.databinding.FragmentChatBinding
 import com.sj.canvas.databinding.ItemChatBinding
 import com.sj.canvas.util.Adapter
@@ -47,19 +49,38 @@ class ChatFragment : Fragment() {
             Navigation.findNavController(it).popBackStack()
         }
 
-        var content: ChatViewModel.Content
+
         adapter = Adapter(viewModel.listChat, { v, p ->
-            content = viewModel.listChat[p]
+            val content: ChatViewModel.Content = viewModel.listChat[p]
             if (content.left) {
                 v.layoutRight.visibility = View.GONE
                 v.layoutLeft.visibility = View.VISIBLE
                 if (content.image != null) {
+                    Log.d("et_log", "设置图片信息")
                     v.imageLeft.setImageDrawable(content.image)
                     v.layoutTextLeft.visibility = View.GONE
-                    v.imageLeft.visibility = View.VISIBLE
+                    v.layoutImageLeft.visibility = View.VISIBLE
+                    v.btnAnalysis.setOnClickListener {
+                        viewModel.listChat.add(ChatViewModel.Content(true, null, "让我来揭晓答案吧"))
+                        adapter.notifyDataSetChanged()
+                        binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
+                        binding.recyclerview.postDelayed({
+                            v.btnAnalysis.pauseAnimation()
+                            viewModel.listChat.add(
+                                ChatViewModel.Content(
+                                    true,
+                                    null,
+                                    "这是${LoadModelTask.getInstance().labels[content.text.toInt()]}手绘啊"
+                                )
+                            )
+                            adapter.notifyDataSetChanged()
+                            binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
+                        }, 1000)
+                    }
                 } else {
+                    Log.d("et_log", "设置文本信息")
                     v.textLeft.text = content.text
-                    v.imageLeft.visibility = View.GONE
+                    v.layoutImageLeft.visibility = View.GONE
                     v.layoutTextLeft.visibility = View.VISIBLE
                 }
             } else {
@@ -90,10 +111,9 @@ class ChatFragment : Fragment() {
                     binding.inputMessage.setText("")
                     binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
 
-                    viewModel.messageResponse(requireContext(), it)?.let {
+                    viewModel.messageResponse(requireContext(), it).let {
                         binding.recyclerview.postDelayed({
-                            viewModel.listChat.add(it)
-                            adapter.notifyItemInserted(viewModel.listChat.size - 1)
+                            adapter.notifyDataSetChanged()
                             binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
                         }, Random.nextLong(2_000) + 500)
                     }
