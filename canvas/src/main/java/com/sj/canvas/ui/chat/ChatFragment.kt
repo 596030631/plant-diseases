@@ -6,14 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sj.canvas.ai.LoadModelTask
+import com.sj.canvas.ai.ImageDetectionFloat
 import com.sj.canvas.databinding.FragmentChatBinding
 import com.sj.canvas.databinding.ItemChatBinding
 import com.sj.canvas.util.Adapter
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlin.random.Random
 
 class ChatFragment : Fragment() {
@@ -64,18 +68,34 @@ class ChatFragment : Fragment() {
                         viewModel.listChat.add(ChatViewModel.Content(true, null, "让我来揭晓答案吧"))
                         adapter.notifyDataSetChanged()
                         binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
-                        binding.recyclerview.postDelayed({
-                            v.btnAnalysis.pauseAnimation()
-                            viewModel.listChat.add(
-                                ChatViewModel.Content(
-                                    true,
-                                    null,
-                                    "这是${LoadModelTask.getInstance().labels[content.text.toInt()]}手绘啊"
-                                )
-                            )
-                            adapter.notifyDataSetChanged()
-                            binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
-                        }, 1000)
+
+                        if (ImageDetectionFloat.getInstance().available()) {
+                            Single.just(content.image?.toBitmap())
+                                .map {
+                                    if (it == null) return@map arrayOf("我也不会了，这确实很难，可以让我换一个")
+                                    return@map ImageDetectionFloat.getInstance().detection(it)
+                                }
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.single())
+                                .subscribe({
+                                    v.btnAnalysis.pauseAnimation()
+                                    if (it != null && it.isNotEmpty()) {
+                                        it.forEach { item ->
+                                            viewModel.listChat.add(
+                                                ChatViewModel.Content(
+                                                    true,
+                                                    null,
+                                                    item ?: "我不会"
+                                                )
+                                            )
+                                        }
+                                    }
+                                    adapter.notifyDataSetChanged()
+                                    binding.recyclerview.scrollToPosition(viewModel.listChat.size - 1)
+                                }, {
+                                    it.printStackTrace()
+                                })
+                        }
                     }
                 } else {
                     Log.d("et_log", "设置文本信息")

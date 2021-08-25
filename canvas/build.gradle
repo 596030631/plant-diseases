@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.3"
     signingConfigs {
         sign {
-            storeFile file('C:\\Users\\Administrator\\android\\plant\\EasyTouch.jks')
+            storeFile file('F:\\Android\\plant-diseases\\EasyTouch.jks')
             keyAlias 'etkey'
             storePassword '86105970'
             keyPassword '86105970'
@@ -20,7 +20,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 1
-        versionName "1.1"
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,7 +67,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation project(path: ':painter')
-    implementation project(path: ':library')
+//    implementation project(path: ':library')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

@@ -35,6 +35,10 @@ class ChatViewModel : ViewModel() {
                 listChat.add(Content(true, null, "准备好了吗，我要开始喽!"))
                 responseImage(context)
             }
+            input.contains("1") -> {
+                listChat.add(Content(true, null, "准备好了吗，我要开始喽!"))
+                responseImage(context)
+            }
 
             input.contains("不会") -> {
                 listChat.add(Content(true, null, arrary3[random.nextInt(arrary3.size)]))
@@ -56,7 +60,7 @@ class ChatViewModel : ViewModel() {
         thread.execute {
             var i: Int
             do {
-                i = random.nextInt(10)
+                i = random.nextInt(57)
                 if (imageIndex != i) {
                     imageIndex = i
                     break
@@ -67,7 +71,7 @@ class ChatViewModel : ViewModel() {
                 Content(
                     image = assets2Drawable(
                         context,
-                        "image/$imageIndex.png"
+                        "image/$imageIndex.jpg"
                     ), text = "$imageIndex"
                 )
             )

@@ -70,9 +70,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:minWidth="150dp"
+                    android:minHeight="150dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="64dp"
-                    android:scaleType="centerInside" />
+                    android:scaleType="centerCrop" />
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/btn_analysis"

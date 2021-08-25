@@ -29,6 +29,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,8 +42,6 @@ class HomeFragment : Fragment() {
     private val contentResolver by lazy {
         requireActivity().contentResolver
     }
-
-    private var srcType = 1
 
     private var photoFile: File? = null
 
@@ -96,22 +95,9 @@ class HomeFragment : Fragment() {
         initEvent()
     }
 
-
     private fun initEvent() {
         binding.btnClear.setOnClickListener {
             binding.paintView.clear()
-        }
-
-        binding.btnSave.setOnClickListener {
-            if (srcType == 1) {
-                binding.paintView.creatBitmap().apply {
-                    changeHomeImageLayout(false)
-                    binding.image.setImageBitmap(this)
-                }
-                binding.paintView.clear()
-                binding.iconAirbnb.setImageDrawable(requireActivity().resources.getDrawable(R.drawable.airbnb_black))
-                binding.labelAnal.setTextColor(Color.BLACK)
-            }
         }
 
         binding.robot.repeatCount = -1
@@ -122,32 +108,39 @@ class HomeFragment : Fragment() {
                 .navigate(R.id.action_navigation_home_to_navigation_chat)
         }
 
+        binding.btnSave.setOnClickListener {
+            showAnalysisButton(true)
+            binding.paintView.creatBitmap().apply {
+                viewModel.bitmap.value = this
+                showImage()
+                binding.image.setImageBitmap(this)
+                createImageFile().also {
+                    try {
+                        val out = FileOutputStream(it)
+                        this.compress(Bitmap.CompressFormat.JPEG, 80, out)
+                        out.flush()
+                        out.close()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            binding.paintView.clear()
 
-        if (viewModel.bitmap.value == null) viewModel.setNullImage(
-            BitmapFactory.decodeResource(
-                resources,
-                R.drawable.nothing
-            )
-        )
-        viewModel.bitmap.observe(viewLifecycleOwner) {
-            binding.image.setImageBitmap(it)
         }
 
         binding.openCamera.setOnClickListener {
-            srcType = 2
+            showImage()
+            showAnalysisButton(false)
             dispatchTakePictureIntent()
-            changeHomeImageLayout(false)
-            binding.iconAirbnb.setImageDrawable(requireActivity().resources.getDrawable(R.drawable.airbnb))
-            binding.labelAnal.setTextColor(Color.WHITE)
         }
 
         binding.openCanvas.setOnClickListener {
-            srcType = 1
-            changeHomeImageLayout(true)
+            showCanvas()
         }
 
         binding.btnAnalysis.setOnClickListener {
-
+            hideAnalysisButton()
             if (ImageDetectionFloat.getInstance().available()) {
                 if (viewModel.bitmap.value == null) {
                     Toast.makeText(requireContext(), "请先选择图片", Toast.LENGTH_SHORT).show()
@@ -155,7 +148,6 @@ class HomeFragment : Fragment() {
                 }
                 binding.loading.visibility = View.VISIBLE
                 binding.loading.start()
-                binding.btnAnalysis.isEnabled = false
                 viewModel.bitmap.value?.let { it1 ->
                     Single.just(it1).map {
                         ImageDetectionFloat.getInstance().detection(it)
@@ -163,9 +155,9 @@ class HomeFragment : Fragment() {
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
+                            viewModel.bitmap.value = null
                             binding.loading.visibility = View.GONE
                             binding.loading.stop()
-                            binding.btnAnalysis.isEnabled = true
                             if (it.isNotEmpty()) {
                                 showResult(it)
                             }
@@ -173,7 +165,6 @@ class HomeFragment : Fragment() {
                             it.printStackTrace()
                             binding.loading.visibility = View.GONE
                             binding.loading.stop()
-                            binding.btnAnalysis.isEnabled = true
                             Toast.makeText(requireContext(), "识别异常", Toast.LENGTH_SHORT).show()
                         })
                 }
@@ -181,22 +172,37 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun changeHomeImageLayout(canvasShow: Boolean) {
-        if (canvasShow) {
-            if (binding.image.visibility != View.INVISIBLE) {
-                binding.image.visibility = View.INVISIBLE
-            }
-            if (binding.layoutBoard.visibility != View.VISIBLE) {
-                binding.layoutBoard.visibility = View.VISIBLE
-            }
-        } else {
-            if (binding.image.visibility != View.VISIBLE) {
-                binding.image.visibility = View.VISIBLE
-            }
-            if (binding.layoutBoard.visibility != View.INVISIBLE) {
-                binding.layoutBoard.visibility = View.INVISIBLE
-            }
+    private fun showCanvas() {
+        if (binding.image.visibility != View.INVISIBLE) {
+            binding.image.visibility = View.INVISIBLE
         }
+        if (binding.layoutBoard.visibility != View.VISIBLE) {
+            binding.layoutBoard.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showImage() {
+        if (binding.image.visibility != View.VISIBLE) {
+            binding.image.visibility = View.VISIBLE
+        }
+        if (binding.layoutBoard.visibility != View.INVISIBLE) {
+            binding.layoutBoard.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun showAnalysisButton(black: Boolean) {
+        binding.btnAnalysis.visibility = View.VISIBLE
+        if (black) {
+            binding.iconAirbnb.setImageDrawable(requireActivity().resources.getDrawable(R.drawable.airbnb_black))
+            binding.labelAnal.setTextColor(Color.BLACK)
+        } else {
+            binding.iconAirbnb.setImageDrawable(requireActivity().resources.getDrawable(R.drawable.airbnb))
+            binding.labelAnal.setTextColor(Color.WHITE)
+        }
+    }
+
+    private fun hideAnalysisButton() {
+        binding.btnAnalysis.visibility = View.GONE
     }
 
     private lateinit var currentPhotoPath: String
@@ -275,16 +281,16 @@ class HomeFragment : Fragment() {
                             ).apply {
                                 return@map Bitmap.createScaledBitmap(
                                     this,
-                                    binding.image.width,
-                                    binding.image.height,
+                                    193,
+                                    256,
                                     true
                                 )
                             }
                         }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
+                            viewModel.bitmap.value = (it)
                             binding.image.scaleType = ImageView.ScaleType.FIT_XY
-                            viewModel.bitmap.postValue(it)
                         }, {
                             Toast.makeText(
                                 requireContext(),
@@ -294,33 +300,34 @@ class HomeFragment : Fragment() {
                         })
                 }
 
-                val uri = data?.data
-                uri?.apply {
-                    Log.e("et_log", "uri=$this")
-                    Single.just(this)
-                        .map {
-                            contentResolver.openInputStream(this).use {
-                                val bitmap = BitmapFactory.decodeStream(it)
-                                Bitmap.createScaledBitmap(
-                                    bitmap,
-                                    binding.image.width,
-                                    binding.image.height,
-                                    true
-                                )
-                            }
-                        }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            binding.image.scaleType = ImageView.ScaleType.FIT_XY
-                            viewModel.bitmap.postValue(it)
-                        }, {
-                            Toast.makeText(
-                                requireContext(),
-                                it.message ?: return@subscribe,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        })
-                }
+//                val uri = data?.data
+//                uri?.apply {
+//                    Log.e("et_log", "uri=$this")
+//                    Single.just(this)
+//                        .map {
+//                            contentResolver.openInputStream(this).use {
+//                                val bitmap = BitmapFactory.decodeStream(it)
+//                                Bitmap.createScaledBitmap(
+//                                    bitmap,
+//                                    binding.image.width,
+//                                    binding.image.height,
+//                                    true
+//                                )
+//                            }
+//                        }.subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribe({
+//                            binding.btnAnalysis.visibility = View.VISIBLE
+//                            binding.image.scaleType = ImageView.ScaleType.FIT_XY
+//                            viewModel.bitmap.postValue(it)
+//                        }, {
+//                            Toast.makeText(
+//                                requireContext(),
+//                                it.message ?: return@subscribe,
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                        })
+//                }
 
             } else if (requestCode == CHOICE_FROM_ALBUM_REQUEST_CODE) {
                 val uri = data?.data

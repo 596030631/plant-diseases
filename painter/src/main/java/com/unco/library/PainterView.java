@@ -47,8 +47,8 @@ public class PainterView extends View {
         mPath = new Path();
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setColor(Color.parseColor("#303F9F"));
-        mPaint.setStrokeWidth(5);
+        mPaint.setColor(Color.BLACK);
+        mPaint.setStrokeWidth(20);
         mPaint.setAntiAlias(true);
 
     }
