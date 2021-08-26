@@ -291,6 +291,7 @@ class HomeFragment : Fragment() {
                         .subscribe({
                             viewModel.bitmap.value = (it)
                             binding.image.scaleType = ImageView.ScaleType.FIT_XY
+                            binding.image.setImageBitmap(it)
                         }, {
                             Toast.makeText(
                                 requireContext(),
